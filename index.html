@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Osh Terminal | Official Booking System</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        :root { 
+            --main: #0044cc; --accent: #ffcc00; --success: #2ecc71; 
+            --danger: #e74c3c; --bg: #f4f7fa; --white: #ffffff;
+            --waiting: #95a5a6; --departed: #8b4513;
+        }
+        
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
+
+        header { 
+            background: var(--white); padding: 12px 8%; 
+            display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top:0; z-index:1000;
+        }
+        .logo-box { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-icon { 
+            background: var(--main); width: 45px; height: 45px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; border: 2px solid var(--accent);
+        }
+        .logo-icon span { color: var(--accent); font-weight: 900; font-size: 22px; }
+        .logo-text b { color: var(--main); font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .hero { 
+            background: linear-gradient(rgba(0,40,120,0.7), rgba(0,40,120,0.7)), 
+            url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=1200'); 
+            background-size: cover; background-position: center;
+            padding: 80px 8% 100px; text-align: center; color: white;
+        }
+
+        .search-wrapper { max-width: 1100px; margin: -50px auto 40px; padding: 0 20px; position: relative; z-index: 100; }
+        .search-main { 
+            background: #fff; display: flex; flex-wrap: wrap; padding: 10px; 
+            border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .search-field { flex: 1; min-width: 180px; padding: 10px 20px; border-right: 1px solid #eee; display: flex; flex-direction: column; }
+        .search-field:last-child { border-right: none; }
+        .search-field label { font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; }
+        .search-field select, .search-field input { border: none; font-weight: 700; padding: 5px 0; font-family: inherit; outline: none; background: transparent; }
+        .search-btn { background: var(--main); color: white; border: none; padding: 15px 35px; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+
+        section { padding: 40px 8%; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        
+        .card { 
+            background: var(--white); padding: 30px; border-radius: 20px; 
+            position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-top: 5px solid var(--main);
+            transition: 0.3s;
+        }
+        .card-departed { background: #fdf5e6 !important; border-top: 5px solid var(--departed) !important; opacity: 0.9; }
+        .card-departed h3, .card-departed p { color: #5d2e0a !important; }
+
+        .status-badge { position: absolute; top: 15px; right: 15px; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .st-waiting { background: #eee; color: #777; }
+        .st-boarding { background: #e8f0fe; color: var(--main); }
+        .st-departed { background: var(--departed); color: white; }
+        .st-cancelled { background: #feebeb; color: var(--danger); }
+
+        .bus-wrapper { background: #333; padding: 25px 15px; border-radius: 35px 35px 15px 15px; max-width: 220px; margin: 20px auto; border: 4px solid #555; }
+        .bus-front { height: 35px; background: #444; margin-bottom: 20px; border-radius: 25px; color: #777; font-size: 9px; display: flex; align-items: center; justify-content: center; }
+        .bus-grid { display: grid; grid-template-columns: repeat(2, 1fr) 20px repeat(2, 1fr); gap: 10px; }
+        .seat { width: 38px; height: 38px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; }
+        .seat-green { background: var(--success); box-shadow: 0 3px 0 #27ae60; }
+        .seat-red { background: var(--danger); cursor: not-allowed; opacity: 0.5; }
+
+        #adminPanel { display: none; background: #fff; padding: 30px; border: 2px dashed var(--main); margin: 20px 8%; border-radius: 20px; }
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        .admin-table td, .admin-table th { padding: 12px; border: 1px solid #eee; text-align: left; }
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; padding: 20px; overflow-y: auto; align-items: center; justify-content: center; }
+        .box { background: white; width: 100%; max-width: 450px; padding: 0; border-radius: 25px; overflow: hidden; }
+        
+        .popular-card { background: var(--white); border-radius: 15px; overflow: hidden; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .popular-img { height: 120px; background-size: cover; background-position: center; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="#" class="logo-box">
+        <div class="logo-icon"><span>O</span></div>
+        <div class="logo-text"><b id="t_logo">Ош Автобекет</b></div>
+    </a>
+    <div style="display:flex; gap:15px; align-items:center;">
+        <button onclick="loginAdmin()" style="background:none; border:none; color:var(--danger); font-weight:800; cursor:pointer;">ADMIN</button>
+        <select id="langSwitch" onchange="changeLang()" style="padding:5px; border-radius:5px; font-weight:700;">
+            <option value="ky">KY</option>
+            <option value="ru">RU</option>
+            <option value="en">EN</option>
+        </select>
+    </div>
+</header>
+
+<div class="hero">
+    <h1 id="h_title">Сапарыңыз байсалдуу болсун!</h1>
+    <p id="h_desc">Ош шаарынын заманбап маалыматтык системасы</p>
+</div>
+
+<div class="search-wrapper">
+    <div class="search-main">
+        <div class="search-field">
+            <label id="l_from">Кайдан</label>
+            <select id="s_from"><option>Ош</option><option>Бишкек</option></select>
+        </div>
+        <div class="search-field">
+            <label id="l_to">Каякка</label>
+            <select id="s_to">
+                <option value="Бишкек">Бишкек</option>
+                <option value="Жалал-Абад">Жалал-Абад</option>
+                <option value="Баткен">Баткен</option>
+            </select>
+        </div>
+        <div class="search-field">
+            <label id="l_date">Дата</label>
+            <input type="date" id="s_date">
+        </div>
+        <div class="search-field" style="flex:0.5; min-width: 120px; justify-content: center; align-items: center; border: none;">
+            <button class="search-btn" onclick="render()" id="b_search">ИЗДӨӨ</button>
+        </div>
+    </div>
+</div>
+
+<section id="popular-section">
+    <h2 id="t_popular">Популярдуу багыттар</h2>
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="popular-card">
+            <div class="popular-img" style="background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=300');"></div>
+            <p style="font-weight:800; padding:10px;">Ош - Бишкек</p>
+        </div>
+        <div class="popular-card">
+            <div class="popular-img" style="background-image: url('https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=300');"></div>
+            <p style="font-weight:800; padding:10px;">Ош - Баткен</p>
+        </div>
+        <div class="popular-card">
+            <div class="popular-img" style="background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=300');"></div>
+            <p style="font-weight:800; padding:10px;">Ош - Жалал-Абад</p>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2 id="t_board">Рейстердин таблосу</h2>
+    <div class="grid" id="routesList"></div>
+</section>
+
+<section style="background: #fff; border-radius: 40px 40px 0 0;">
+    <h2 id="t_services">Биздин кызматтар</h2>
+    <div class="grid" style="text-align: center;">
+        <div><h1 style="font-size:40px;">🎟️</h1><h4 id="s1_t">Онлайн Билет</h4><p id="s1_d">Билетти 2 мүнөттө алыңыз</p></div>
+        <div><h1 style="font-size:40px;">📦</h1><h4 id="s2_t">Посылка</h4><p id="s2_d">Жүктөрдү тез жеткирүү</p></div>
+        <div><h1 style="font-size:40px;">🛋️</h1><h4 id="s3_t">VIP Зал</h4><p id="s3_d">Ыңгайлуу күтүү шарттары</p></div>
+    </div>
+</section>
+
+<div id="adminPanel">
+    <h2 style="margin-top:0;">Башкаруу панели</h2>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
+        <input id="a_code" placeholder="Код (№777)">
+        <input id="a_to" placeholder="Каякка">
+        <input id="a_date" type="date">
+        <input id="a_time" type="time">
+        <input id="a_car" placeholder="Унаа №">
+        <input id="a_price" type="number" placeholder="Баасы (сом)">
+        <button class="search-btn" style="background:var(--success);" onclick="addRoute()">Кошуу</button>
+    </div>
+    <table class="admin-table">
+        <thead><tr><th>Код</th><th>Багыт</th><th>Дата</th><th>Баасы</th><th>Статус</th><th>Аракет</th></tr></thead>
+        <tbody id="adminBody"></tbody>
+    </table>
+</div>
+
+<footer style="padding:40px; text-align:center; opacity:0.6; font-size:12px;">
+    © 2025 Osh Bus Terminal | Developer: <b>Abdulla Kalilov</b>
+</footer>
+
+<div id="modal" class="modal"><div class="box" id="modalContent"></div></div>
+
+<script>
+    let currentLang = 'ky';
+    const dict = {
+        ky: { h_title: "Сапарыңыз байсалдуу болсун!", h_desc: "Заманбап тейлөө", l_from: "Кайдан", l_to: "Каякка", l_date: "Дата", b_search: "ИЗДӨӨ", t_board: "Рейстердин таблосу", t_popular: "Популярдуу багыттар", t_services: "Биздин кызматтар", s1_t: "Онлайн Билет", s1_d: "Билетти 2 мүнөттө алыңыз", s2_t: "Посылка", s2_d: "Жүктөрдү тез жеткирүү", s3_t: "VIP Зал", s3_d: "Ыңгайлуу күтүү шарттары", buy: "Билет алуу", waiting: "Күтүлүүдө", boarding: "Отургузуу", departed: "Кетти", cancelled: "Кайтарылды", t_logo: "Ош Автобекет" },
+        ru: { h_title: "Счастливого пути!", h_desc: "Современный сервис", l_from: "Откуда", l_to: "Куда", l_date: "Дата", b_search: "ПОИСК", t_board: "Табло рейсов", t_popular: "Популярные направления", t_services: "Наши услуги", s1_t: "Онлайн Билет", s1_d: "Билет за 2 минуты", s2_t: "Посылка", s2_d: "Быстрая доставка грузов", s3_t: "VIP Зал", s3_d: "Комфортные условия ожидания", buy: "Купить билет", waiting: "Ожидание", boarding: "Посадка", departed: "Уехал", cancelled: "Отменен", t_logo: "Ош Автовокзал" },
+        en: { h_title: "Have a nice trip!", h_desc: "Modern service", l_from: "From", l_to: "To", l_date: "Date", b_search: "SEARCH", t_board: "Flight Board", t_popular: "Popular Routes", t_services: "Our Services", s1_t: "Online Ticket", s1_d: "Ticket in 2 minutes", s2_t: "Parcel", s2_d: "Fast cargo delivery", s3_t: "VIP Hall", s3_d: "Comfortable waiting conditions", buy: "Buy Ticket", waiting: "Waiting", boarding: "Boarding", departed: "Departed", cancelled: "Cancelled", t_logo: "Osh Terminal" }
+    };
+
+    let routes = JSON.parse(localStorage.getItem('osh_final_db_v5')) || [];
+    let booked = JSON.parse(localStorage.getItem('osh_booked_v5')) || {};
+
+    function changeLang() {
+        currentLang = document.getElementById('langSwitch').value;
+        Object.keys(dict[currentLang]).forEach(id => {
+            if(document.getElementById(id)) document.getElementById(id).innerText = dict[currentLang][id];
+        });
+        render();
+    }
+
+    function render() {
+        const list = document.getElementById('routesList');
+        const adminBody = document.getElementById('adminBody');
+        list.innerHTML = ""; adminBody.innerHTML = "";
+
+        const f_to = document.getElementById('s_to').value;
+        const f_date = document.getElementById('s_date').value;
+
+        routes.forEach(r => {
+            // ТАБЛО КАРТАЛАРЫ (Фильтр менен)
+            if(r.to === f_to && (!f_date || r.date === f_date)) {
+                const isDep = r.status === 'departed';
+                list.innerHTML += `
+                    <div class="card ${isDep ? 'card-departed' : ''}">
+                        <span class="status-badge st-${r.status}">${dict[currentLang][r.status]}</span>
+                        <small style="color:var(--main); font-weight:800;">#${r.code}</small>
+                        <h3 style="margin:10px 0;">Ош ➔ ${r.to}</h3>
+                        <p style="font-size:14px; color:#666; margin-bottom:5px;">📅 ${r.date} | ⏰ ${r.time}<br>🚐 ${r.car}</p>
+                        <div style="font-weight:800; color:var(--success); margin-bottom:15px; font-size:18px;">${r.price || 500} СОМ</div>
+                        <button class="search-btn" style="width:100%; ${isDep ? 'background:var(--departed);' : ''}" 
+                                onclick="openSeats('${r.id}')" 
+                                ${isDep || r.status === 'cancelled' ? 'disabled' : ''}>
+                            ${isDep ? 'ЖӨНӨП КЕТТИ' : dict[currentLang].buy}
+                        </button>
+                    </div>`;
+            }
+
+            // АДМИН ТАБЛИЦА
+            adminBody.innerHTML += `
+                <tr>
+                    <td>#${r.code}</td><td>${r.to}</td><td>${r.date}</td><td>${r.price} сом</td>
+                    <td>
+                        <select onchange="updateStatus('${r.id}', this.value)">
+                            <option value="waiting" ${r.status==='waiting'?'selected':''}>Күтүлүүдө</option>
+                            <option value="boarding" ${r.status==='boarding'?'selected':''}>Отургузуу</option>
+                            <option value="departed" ${r.status==='departed'?'selected':''}>Кетти</option>
+                            <option value="cancelled" ${r.status==='cancelled'?'selected':''}>Кайтарылды</option>
+                        </select>
+                    </td>
+                    <td><button onclick="deleteRoute('${r.id}')" style="color:red; border:none; background:none; cursor:pointer;">Өчүрүү</button></td>
+                </tr>`;
+        });
+    }
+
+    // БАРДЫК РЕЙСТЕРДИ БАШЫНДА КӨРСӨТҮҮ
+    function initialRender() {
+        const list = document.getElementById('routesList');
+        list.innerHTML = "";
+        routes.forEach(r => {
+            const isDep = r.status === 'departed';
+            list.innerHTML += `
+                <div class="card ${isDep ? 'card-departed' : ''}">
+                    <span class="status-badge st-${r.status}">${dict[currentLang][r.status]}</span>
+                    <small style="color:var(--main); font-weight:800;">#${r.code}</small>
+                    <h3 style="margin:10px 0;">Ош ➔ ${r.to}</h3>
+                    <p style="font-size:14px; color:#666; margin-bottom:5px;">📅 ${r.date} | ⏰ ${r.time}<br>🚐 ${r.car}</p>
+                    <div style="font-weight:800; color:var(--success); margin-bottom:15px; font-size:18px;">${r.price || 500} СОМ</div>
+                    <button class="search-btn" style="width:100%; ${isDep ? 'background:var(--departed);' : ''}" 
+                            onclick="openSeats('${r.id}')" 
+                            ${isDep || r.status === 'cancelled' ? 'disabled' : ''}>
+                        ${isDep ? 'ЖӨНӨП КЕТТИ' : dict[currentLang].buy}
+                    </button>
+                </div>`;
+        });
+    }
+
+    function openSeats(id) {
+        const r = routes.find(x => x.id === id);
+        if(!booked[id]) booked[id] = [];
+        let seatsHTML = "";
+        for(let i=1; i<=16; i++) {
+            const isTaken = booked[id].includes(i);
+            seatsHTML += `<div class="seat ${isTaken ? 'seat-red' : 'seat-green'}" 
+                          ${isTaken ? '' : `onclick="askInfo('${id}', ${i})"`}>${i}</div>`;
+            if(i % 2 === 0 && i % 4 !== 0) seatsHTML += `<div style="grid-column: 3;"></div>`;
+        }
+        document.getElementById('modalContent').innerHTML = `
+            <div style="padding:20px;">
+                <h3>Орун тандаңыз (#${r.code})</h3>
+                <div class="bus-wrapper"><div class="bus-front">FRONT</div><div class="bus-grid">${seatsHTML}</div></div>
+                <button class="search-btn" style="background:#888; width:100%;" onclick="closeModal()">Жабуу</button>
+            </div>`;
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function askInfo(id, seat) {
+        const r = routes.find(x => x.id === id);
+        document.getElementById('modalContent').innerHTML = `
+            <div style="padding:30px; text-align:left;">
+                <h3 style="margin-bottom:20px; text-align:center;">Маалыматтарды толтуруңуз</h3>
+                <label style="font-size:12px; font-weight:bold;">Аты-жөнүңүз (ФИО):</label>
+                <input id="uName" type="text" placeholder="Мисалы: Абдулла Медетбекович" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; margin-bottom:15px;">
+                <label style="font-size:12px; font-weight:bold;">Gmail почтаңыз:</label>
+                <input id="uEmail" type="email" placeholder="example@gmail.com" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; margin-bottom:15px;">
+                <div style="background:#f9f9f9; padding:15px; border-radius:10px; border-left:4px solid var(--main); margin-bottom:20px;">
+                    <p style="margin:0;">Төлөнүүчү сумма: <b>${r.price || 500} СОМ</b></p>
+                </div>
+                <button class="search-btn" style="width:100%; background:var(--success);" onclick="payPage('${id}', ${seat})">Төлөөгө өтүү ➔</button>
+            </div>`;
+    }
+
+    function payPage(id, seat) {
+        const name = document.getElementById('uName').value;
+        const email = document.getElementById('uEmail').value;
+        if (!name || !email || !email.includes('@')) return alert("Маалыматтарды туура толтуруңуз!");
+
+        document.getElementById('modalContent').innerHTML = `
+            <div style="padding:30px;">
+                <h3>Банк картасы менен төлөө</h3>
+                <div style="background:#eee; padding:20px; border-radius:15px; text-align:left; margin-bottom:20px;">
+                    <label style="font-size:10px;">КАРТА №</label>
+                    <input type="text" placeholder="0000 0000 0000 0000" maxlength="16" style="width:100%; padding:10px; margin-bottom:10px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <input type="text" placeholder="MM/YY" maxlength="5" style="padding:10px;">
+                        <input type="password" placeholder="CVC" maxlength="3" style="padding:10px;">
+                    </div>
+                </div>
+                <button class="search-btn" style="width:100%;" onclick="confirmPayment('${id}', ${seat}, '${name}', '${email}')">Төлөдүм</button>
+            </div>`;
+    }
+
+    function confirmPayment(id, seat, name, email) {
+        booked[id].push(seat);
+        localStorage.setItem('osh_booked_v5', JSON.stringify(booked));
+        const r = routes.find(x => x.id === id);
+        alert(`Төлөм кабыл алынды! Билет ${email} почтасына жөнөтүлдү.`);
+        showFinalTicket(r, name, seat, email);
+    }
+
+    function showFinalTicket(r, name, seat, email) {
+        const purchaseTime = new Date().toLocaleString();
+        document.getElementById('modalContent').innerHTML = `
+            <div style="background: white; border-radius: 25px; overflow: hidden; text-align: left;">
+                <div style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; padding: 20px; text-align: center;">
+                    <h2 style="margin:0;">ТӨЛӨНДҮ / PAID ✔️</h2>
+                    <small>ОШ АВТОБЕКЕТИ</small>
+                </div>
+                <div style="padding: 25px;">
+                    <div style="display: flex; justify-content: space-between; background: #f0f7f2; padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+                        <div style="text-align: center; flex: 1; border-right: 1px dashed #ccc;">
+                            <small>ДАТА</small><br><b>${r.date}</b>
+                        </div>
+                        <div style="text-align: center; flex: 1;">
+                            <small>СААТ</small><br><b style="font-size: 20px; color:#e67e22;">${r.time}</b>
+                        </div>
+                    </div>
+                    <p><b>Жүргүнчү:</b> ${name} (${email})</p>
+                    <p><b>Багыт:</b> Ош ➔ ${r.to}</p>
+                    <p><b>Орун:</b> <b style="font-size:20px; color:var(--success);">№${seat}</b></p>
+                    <p><b>Баасы:</b> ${r.price} сом</p>
+                    <div style="display:flex; justify-content:center; padding:15px;"><div id="qrcode"></div></div>
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 10px; font-size: 10px; color: #856404;">
+                        ⚠️ <b>ЭСКЕРТҮҮ:</b> Автобус саат <b>${r.time}</b>до кетет. 15 мүнөт эрте келиңиз.
+                    </div>
+                </div>
+                <button class="search-btn" style="width: 100%; border-radius: 0; background: #2c3e50;" onclick="closeModal()">ЖАБУУ</button>
+            </div>`;
+        setTimeout(() => {
+            new QRCode(document.getElementById("qrcode"), { text: `TKT:${r.code}|PSGR:${name}|SEAT:${seat}`, width: 110, height: 110 });
+        }, 200);
+    }
+
+    function addRoute() {
+        const r = { 
+            id: Date.now().toString(), 
+            code: a_code.value, 
+            to: a_to.value, 
+            date: a_date.value, 
+            time: a_time.value, 
+            car: a_car.value, 
+            price: a_price.value,
+            status: 'waiting' 
+        };
+        if(!r.code || !r.to || !r.date || !r.price) return alert("Бардык талааларды толтуруңуз!");
+        routes.push(r); save();
+    }
+
+    function updateStatus(id, s) { const i = routes.findIndex(x => x.id === id); routes[i].status = s; save(); }
+    function deleteRoute(id) { if(confirm("Өчүрүлсүнбү?")) { routes = routes.filter(x => x.id !== id); save(); } }
+    function save() { localStorage.setItem('osh_final_db_v5', JSON.stringify(routes)); render(); }
+    function loginAdmin() { if(prompt("Сыр сөз:") === "admin777") document.getElementById('adminPanel').style.display='block'; }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; render(); }
+
+    initialRender();
+</script>
+</body>
+</html>
