@@ -245,29 +245,82 @@
                     <td><button onclick="deleteRoute('${r.id}')" style="color:red; border:none; background:none; cursor:pointer;">Өчүрүү</button></td>
                 </tr>`;
         });
-    }
+    // 1. Картанын HTML кодун түзүүчү функция (дизайн бир жерде болушу үчүн)
+function createCardHTML(r) {
+    const isDep = r.status === 'departed';
+    return `
+        <div class="card ${isDep ? 'card-departed' : ''}">
+            <span class="status-badge st-${r.status}">${dict[currentLang][r.status]}</span>
+            <small style="color:var(--main); font-weight:800;">#${r.code}</small>
+            <h3 style="margin:10px 0;">Ош ➔ ${r.to}</h3>
+            <p style="font-size:14px; color:#666; margin-bottom:5px;">📅 ${r.date} | ⏰ ${r.time}<br>🚐 ${r.car}</p>
+            <div style="font-weight:800; color:var(--success); margin-bottom:15px; font-size:18px;">${r.price || 500} СОМ</div>
+            <button class="search-btn" style="width:100%; ${isDep ? 'background:var(--departed);' : ''}" 
+                    onclick="openSeats('${r.id}')" 
+                    ${isDep || r.status === 'cancelled' ? 'disabled' : ''}>
+                ${isDep ? 'ЖӨНӨП КЕТТИ' : dict[currentLang].buy}
+            </button>
+        </div>`;
+}
 
-    // БАРДЫК РЕЙСТЕРДИ БАШЫНДА КӨРСӨТҮҮ
-    function initialRender() {
-        const list = document.getElementById('routesList');
-        list.innerHTML = "";
-        routes.forEach(r => {
-            const isDep = r.status === 'departed';
-            list.innerHTML += `
-                <div class="card ${isDep ? 'card-departed' : ''}">
-                    <span class="status-badge st-${r.status}">${dict[currentLang][r.status]}</span>
-                    <small style="color:var(--main); font-weight:800;">#${r.code}</small>
-                    <h3 style="margin:10px 0;">Ош ➔ ${r.to}</h3>
-                    <p style="font-size:14px; color:#666; margin-bottom:5px;">📅 ${r.date} | ⏰ ${r.time}<br>🚐 ${r.car}</p>
-                    <div style="font-weight:800; color:var(--success); margin-bottom:15px; font-size:18px;">${r.price || 500} СОМ</div>
-                    <button class="search-btn" style="width:100%; ${isDep ? 'background:var(--departed);' : ''}" 
-                            onclick="openSeats('${r.id}')" 
-                            ${isDep || r.status === 'cancelled' ? 'disabled' : ''}>
-                        ${isDep ? 'ЖӨНӨП КЕТТИ' : dict[currentLang].buy}
-                    </button>
-                </div>`;
+// 2. Издөө баскычын басканда иштөөчү функция
+function render() {
+    const list = document.getElementById('routesList');
+    const f_to = document.getElementById('s_to').value;
+    const f_date = document.getElementById('s_date').value;
+    
+    list.innerHTML = "";
+    
+    const filtered = routes.filter(r => {
+        return r.to === f_to && (!f_date || r.date === f_date);
+    });
+
+    if (filtered.length === 0) {
+        list.innerHTML = "<p style='text-align:center; padding:20px;'>Кечиресиз, бул багыт боюнча рейс табылган жок.</p>";
+    } else {
+        filtered.forEach(r => {
+            list.innerHTML += createCardHTML(r);
         });
     }
+    renderAdminTable(); // Админ панелди да кошо жаңылайт
+}
+
+// 3. Админ таблицасын жаңылоочу функция
+function renderAdminTable() {
+    const adminBody = document.getElementById('adminBody');
+    if(!adminBody) return;
+    adminBody.innerHTML = "";
+    routes.forEach(r => {
+        adminBody.innerHTML += `
+            <tr>
+                <td>#${r.code}</td><td>${r.to}</td><td>${r.date}</td><td>${r.price} сом</td>
+                <td>
+                    <select onchange="updateStatus('${r.id}', this.value)">
+                        <option value="waiting" ${r.status==='waiting'?'selected':''}>Күтүлүүдө</option>
+                        <option value="boarding" ${r.status==='boarding'?'selected':''}>Отургузуу</option>
+                        <option value="departed" ${r.status==='departed'?'selected':''}>Кетти</option>
+                        <option value="cancelled" ${r.status==='cancelled'?'selected':''}>Кайтарылды</option>
+                    </select>
+                </td>
+                <td><button onclick="deleteRoute('${r.id}')" style="color:red; border:none; background:none; cursor:pointer;">Өчүрүү</button></td>
+            </tr>`;
+    });
+}
+
+// 4. Сайт жаңыланганда (refresh) баарын дароо чыгаруучу функция
+function initialLoad() {
+    const list = document.getElementById('routesList');
+    list.innerHTML = "";
+    
+    if (routes.length === 0) {
+        list.innerHTML = "<p style='text-align:center; color:#888; grid-column: 1/-1;'>Азырынча рейстер жок...</p>";
+    } else {
+        routes.forEach(r => {
+            list.innerHTML += createCardHTML(r);
+        });
+    }
+    renderAdminTable();
+}
 
     function openSeats(id) {
         const r = routes.find(x => x.id === id);
@@ -330,41 +383,75 @@
         const r = routes.find(x => x.id === id);
         alert(`Төлөм кабыл алынды! Билет ${email} почтасына жөнөтүлдү.`);
         showFinalTicket(r, name, seat, email);
-    }
-
     function showFinalTicket(r, name, seat, email) {
-        const purchaseTime = new Date().toLocaleString();
-        document.getElementById('modalContent').innerHTML = `
-            <div style="background: white; border-radius: 25px; overflow: hidden; text-align: left;">
-                <div style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; padding: 20px; text-align: center;">
-                    <h2 style="margin:0;">ТӨЛӨНДҮ / PAID ✔️</h2>
-                    <small>ОШ АВТОБЕКЕТИ</small>
-                </div>
-                <div style="padding: 25px;">
-                    <div style="display: flex; justify-content: space-between; background: #f0f7f2; padding: 15px; border-radius: 15px; margin-bottom: 20px;">
-                        <div style="text-align: center; flex: 1; border-right: 1px dashed #ccc;">
-                            <small>ДАТА</small><br><b>${r.date}</b>
-                        </div>
-                        <div style="text-align: center; flex: 1;">
-                            <small>СААТ</small><br><b style="font-size: 20px; color:#e67e22;">${r.time}</b>
-                        </div>
-                    </div>
-                    <p><b>Жүргүнчү:</b> ${name} (${email})</p>
-                    <p><b>Багыт:</b> Ош ➔ ${r.to}</p>
-                    <p><b>Орун:</b> <b style="font-size:20px; color:var(--success);">№${seat}</b></p>
-                    <p><b>Баасы:</b> ${r.price} сом</p>
-                    <div style="display:flex; justify-content:center; padding:15px;"><div id="qrcode"></div></div>
-                    <div style="background: #fff3cd; padding: 10px; border-radius: 10px; font-size: 10px; color: #856404;">
-                        ⚠️ <b>ЭСКЕРТҮҮ:</b> Автобус саат <b>${r.time}</b>до кетет. 15 мүнөт эрте келиңиз.
-                    </div>
-                </div>
-                <button class="search-btn" style="width: 100%; border-radius: 0; background: #2c3e50;" onclick="closeModal()">ЖАБУУ</button>
-            </div>`;
-        setTimeout(() => {
-            new QRCode(document.getElementById("qrcode"), { text: `TKT:${r.code}|PSGR:${name}|SEAT:${seat}`, width: 110, height: 110 });
-        }, 200);
-    }
+    // Билет алынган так учур
+    const now = new Date();
+    const purchaseTime = now.toLocaleDateString() + " " + now.toLocaleTimeString().slice(0, 5);
 
+    document.getElementById('modalContent').innerHTML = `
+        <div style="background: white; border-radius: 25px; overflow: hidden; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <div style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; padding: 20px; text-align: center;">
+                <h2 style="margin:0; letter-spacing:1px;">ТӨЛӨНДҮ / PAID ✔️</h2>
+                <small style="opacity:0.9;">ЭЛЕКТРОНДУК БИЛЕТ / E-TICKET</small>
+            </div>
+            
+            <div style="padding: 25px;">
+                <div style="display: flex; justify-content: space-between; background: #f0f7f2; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #d4edda;">
+                    <div style="text-align: center; flex: 1; border-right: 1px dashed #ccc;">
+                        <small style="color:#666; font-size:10px;">КЕТҮҮ КҮНҮ</small><br>
+                        <b style="font-size:16px;">${r.date}</b>
+                    </div>
+                    <div style="text-align: center; flex: 1;">
+                        <small style="color:#666; font-size:10px;">КЕТҮҮ СААТЫ</small><br>
+                        <b style="font-size:20px; color:#e67e22;">${r.time}</b>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>👤 <b>Жүргүнчү:</b></span>
+                        <span>${name}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>📍 <b>Багыт:</b></span>
+                        <span>Ош ➔ ${r.to}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>💺 <b>Орун:</b></span>
+                        <b style="color:var(--success); font-size:18px;">№${seat}</b>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>💰 <b>Баасы:</b></span>
+                        <b>${r.price} сом</b>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; color:#888; font-size:12px; margin-top:5px;">
+                        <span>📧 Почта:</span>
+                        <span>${email}</span>
+                    </div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; align-items:center; padding:10px; border-top:1px dashed #ddd;">
+                    <div id="qrcode"></div>
+                    <div style="margin-top:10px; font-size:11px; color:#999; background:#f9f9f9; padding:4px 10px; border-radius:10px;">
+                        🗓 Сатып алынган күнү: <b>${purchaseTime}</b>
+                    </div>
+                </div>
+
+                <div style="background: #fff3cd; padding: 12px; border-radius: 12px; font-size: 10px; color: #856404; margin-top: 15px;">
+                    <b>⚠️ МААНИЛҮҮ:</b> Автобус саат <b>${r.time}</b>до жөнөйт. Билетти контролерго көрсөтүңүз.
+                </div>
+            </div>
+            <button class="search-btn" style="width: 100%; border-radius: 0; background: #2c3e50; padding:18px;" onclick="closeModal()">ЖАБУУ</button>
+        </div>`;
+
+    setTimeout(() => {
+        new QRCode(document.getElementById("qrcode"), { 
+            text: `TKT:${r.code}|DATE:${r.date}|TIME:${r.time}|BOUGHT:${purchaseTime}`, 
+            width: 120, 
+            height: 120 
+        });
+    }, 200);
+}
     function addRoute() {
         const r = { 
             id: Date.now().toString(), 
