@@ -124,7 +124,7 @@
             <input type="date" id="s_date">
         </div>
         <div class="search-field" style="flex:0.5; min-width: 120px; justify-content: center; align-items: center; border: none;">
-            <button class="search-btn" onclick="render()" id="b_search">ИЗДӨӨ</button>
+            <button type="button" class="search-btn" onclick="render()" id="b_search">ИЗДӨӨ</button>
         </div>
     </div>
 </div>
@@ -201,35 +201,36 @@
             if(document.getElementById(id)) document.getElementById(id).innerText = dict[currentLang][id];
         });
         render();
+    function render() {
+    const list = document.getElementById('routesList');
+    const f_to = document.getElementById('s_to').value;
+    const f_date = document.getElementById('s_date').value;
+    
+    // Таблону тазалап, издөөгө туура келгендерин гана кошобуз
+    list.innerHTML = "";
+    
+    // Фильтрлөө логикасы
+    const filtered = routes.filter(r => {
+        // Эгер дата тандалбаса, багыты боюнча гана издейт
+        return r.to === f_to && (!f_date || r.date === f_date);
+    });
+
+    if (filtered.length === 0) {
+        list.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                <h3 style="color: #888;">Кечиресиз, бул багыт боюнча рейс табылган жок. 😕</h3>
+                <p>Башка датаны же багытты тандап көрүңүз.</p>
+            </div>`;
+    } else {
+        filtered.forEach(r => {
+            // Мурда түзүлгөн createCardHTML функциясын колдонобуз
+            list.innerHTML += createCardHTML(r);
+        });
     }
 
-    function render() {
-        const list = document.getElementById('routesList');
-        const adminBody = document.getElementById('adminBody');
-        list.innerHTML = ""; adminBody.innerHTML = "";
-
-        const f_to = document.getElementById('s_to').value;
-        const f_date = document.getElementById('s_date').value;
-
-        routes.forEach(r => {
-            // ТАБЛО КАРТАЛАРЫ (Фильтр менен)
-            if(r.to === f_to && (!f_date || r.date === f_date)) {
-                const isDep = r.status === 'departed';
-                list.innerHTML += `
-                    <div class="card ${isDep ? 'card-departed' : ''}">
-                        <span class="status-badge st-${r.status}">${dict[currentLang][r.status]}</span>
-                        <small style="color:var(--main); font-weight:800;">#${r.code}</small>
-                        <h3 style="margin:10px 0;">Ош ➔ ${r.to}</h3>
-                        <p style="font-size:14px; color:#666; margin-bottom:5px;">📅 ${r.date} | ⏰ ${r.time}<br>🚐 ${r.car}</p>
-                        <div style="font-weight:800; color:var(--success); margin-bottom:15px; font-size:18px;">${r.price || 500} СОМ</div>
-                        <button class="search-btn" style="width:100%; ${isDep ? 'background:var(--departed);' : ''}" 
-                                onclick="openSeats('${r.id}')" 
-                                ${isDep || r.status === 'cancelled' ? 'disabled' : ''}>
-                            ${isDep ? 'ЖӨНӨП КЕТТИ' : dict[currentLang].buy}
-                        </button>
-                    </div>`;
-            }
-
+    // Издөөдөн кийин экрандын табло турган жерине акырын жылдыруу (опционалдуу)
+    document.getElementById('t_board').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
             // АДМИН ТАБЛИЦА
             adminBody.innerHTML += `
                 <tr>
