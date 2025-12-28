@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Osh Terminal Pro | 2025</title>
+    <title>Osh Terminal Pro | Final 2025</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -39,11 +39,9 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.15); align-items: center;
         }
         .search-group { flex: 1; min-width: 150px; display: flex; flex-direction: column; padding: 0 15px; border-right: 1px solid #eee; }
-        .search-group:last-child { border: none; }
         .search-group label { font-size: 10px; font-weight: 800; color: #999; margin-bottom: 5px; }
         .search-group select, .search-group input { border: none; font-weight: 700; outline: none; font-size: 15px; background: none; }
         .btn-main { background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 18px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        .btn-main:hover { background: #0033aa; transform: scale(1.02); }
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary); }
@@ -60,6 +58,8 @@
         .st-waiting { background: #f0f0f0; color: #888; }
         .st-boarding { background: #e3f2fd; color: #1976d2; }
         .st-departed { background: #efebe9; color: #5d4037; }
+        .st-delayed { background: var(--accent); color: #333; }
+        .st-cancelled { background: var(--danger); color: white; }
 
         .ticket-box { width: 100%; max-width: 400px; margin: auto; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.4)); text-align: left; }
         .t-top { background: linear-gradient(135deg, #0044cc, #002288); color: white; padding: 20px; border-radius: 20px 20px 0 0; }
@@ -67,10 +67,10 @@
         .t-divider { height: 20px; background: white; border-top: 2px dashed #ddd; position: relative; }
         .t-divider::before, .t-divider::after { content:''; position: absolute; width:20px; height:20px; border-radius:50%; background:#1a1a1a; top:-11px; }
         .t-divider::before { left: -10px; } .t-divider::after { right: -10px; }
-        .t-bottom { background: white; padding: 20px; border-radius: 0 0 20px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .t-bottom { background: white; padding: 20px; border-radius: 0 0 20px 20px; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
-        #adminPanel { display: none; background: white; margin: 20px 8%; padding: 30px; border-radius: 30px; border: 2px solid #eee; }
+        #adminPanel { display: none; background: white; margin: 20px 8%; padding: 30px; border-radius: 30px; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
@@ -133,7 +133,7 @@
     </div>
     <div style="overflow-x: auto; margin-top: 20px;">
         <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-            <thead><tr style="text-align: left; color: #888;"><th>ID</th><th>TO</th><th>STATUS</th><th>X</th></tr></thead>
+            <thead><tr style="text-align: left; color: #888;"><th>Код</th><th>Багыт</th><th>Статус</th><th>Аракет</th></tr></thead>
             <tbody id="adminTable"></tbody>
         </table>
     </div>
@@ -155,31 +155,31 @@
         ky: { 
             h_title: "Сапарыңыз байсалдуу болсун!", h_desc: "Ош шаарынын заманбап онлайн брондоо системасы",
             l_to: "КАЯККА", l_date: "ДАТА", b_search: "ИЗДӨӨ", t_board: "Рейстердин таблосу",
-            buy: "Билет алуу", waiting: "Күтүүдө", boarding: "Отургузуу", departed: "Кетти", delayed: "Кармалды",
+            buy: "Билет алуу", waiting: "Күтүүдө", boarding: "Отургузуу", departed: "Кетти", delayed: "Кармалды", cancelled: "Кайтарылды",
             st_1: "Киреше", st_2: "Билеттер", st_3: "Рейстер", a_title: "Башкаруу жана Статистика",
             m_seat: "Орун тандаңыз", m_close: "Жабуу", p_name: "Аты-жөнүңүз:",
             t_issue: "Сатылган күнү", t_pass: "ЖҮРГҮНЧҮ", t_num: "БИЛЕТ №", t_date: "КҮНҮ", t_time: "УБАКТЫ", t_car: "УНАА", t_plate: "МАМ. НОМЕР", t_seat: "ОРУН",
-            t_warn: "ЭСКЕРТҮҮ", t_msg: "* Унаа жөнөргө 30 мүнөт калганда келиңиз.<br>* Билетти айдоочуга көрсөтүңүз.",
+            t_warn: "ЭСКЕРТҮҮ", t_msg: "* Унаа жөнөргө 30 мүнөт калганда келиңиз.<br>* Билетти айдоочуга көрсөтүңүз.<br>* Сапарда коопсуздукту сактаңыз.",
             t_save: "САКТОО (PNG)", t_exit: "ЧЫГУУ"
         },
         ru: { 
             h_title: "Счастливого пути!", h_desc: "Современная система бронирования города Ош",
             l_to: "КУДА", l_date: "ДАТА", b_search: "ПОИСК", t_board: "Табло рейсов",
-            buy: "Купить билет", waiting: "Ожидание", boarding: "Посадка", departed: "Уехал", delayed: "Задержан",
+            buy: "Купить билет", waiting: "Ожидание", boarding: "Посадка", departed: "Уехал", delayed: "Задержан", cancelled: "Отменен",
             st_1: "Доход", st_2: "Билеты", st_3: "Рейсы", a_title: "Управление и Статистика",
             m_seat: "Выберите место", m_close: "Закрыть", p_name: "Ваше имя:",
             t_issue: "Дата продажи", t_pass: "ПАССАЖИР", t_num: "БИЛЕТ №", t_date: "ДАТА", t_time: "ВРЕМЯ", t_car: "АВТО", t_plate: "ГОС. НОМЕР", t_seat: "МЕСТО",
-            t_warn: "ВНИМАНИЕ", t_msg: "* Прибудьте за 30 минут до выезда.<br>* Покажите билет водителю.",
+            t_warn: "ВНИМАНИЕ", t_msg: "* Прибудьте за 30 минут до выезда.<br>* Покажите билет водителю.<br>* Соблюдайте безопасность.",
             t_save: "СОХРАНИТЬ", t_exit: "ВЫХОД"
         },
         en: { 
             h_title: "Have a nice trip!", h_desc: "Modern booking system of Osh city",
             l_to: "TO", l_date: "DATE", b_search: "SEARCH", t_board: "Departure Board",
-            buy: "Get Ticket", waiting: "Waiting", boarding: "Boarding", departed: "Departed", delayed: "Delayed",
+            buy: "Get Ticket", waiting: "Waiting", boarding: "Boarding", departed: "Departed", delayed: "Delayed", cancelled: "Cancelled",
             st_1: "Revenue", st_2: "Tickets", st_3: "Routes", a_title: "Admin & Statistics",
             m_seat: "Select Seat", m_close: "Close", p_name: "Full Name:",
             t_issue: "Date of Issue", t_pass: "PASSENGER", t_num: "TICKET №", t_date: "DATE", t_time: "TIME", t_car: "VEHICLE", t_plate: "PLATE", t_seat: "SEAT",
-            t_warn: "ATTENTION", t_msg: "* Arrive 30 minutes before departure.<br>* Show this ticket to the driver.",
+            t_warn: "ATTENTION", t_msg: "* Arrive 30 minutes before departure.<br>* Show this ticket to the driver.<br>* Stay safe during travel.",
             t_save: "SAVE PNG", t_exit: "EXIT"
         }
     };
@@ -200,6 +200,35 @@
         renderRoutes();
     }
 
+    // --- АВТОМАТТЫК СТАТУС ЖАНА ӨЧҮРҮҮ ---
+    function autoUpdateStatus() {
+        const now = new Date();
+        let changed = false;
+        db.forEach((r, index) => {
+            const rTime = new Date(`${r.date}T${r.time}`);
+            const diffMin = (rTime - now) / 60000;
+
+            // 1 сааттан кийин таблодон өчүрүү
+            if (diffMin <= -60) {
+                db.splice(index, 1);
+                changed = true;
+                return;
+            }
+
+            // Авто-статустар
+            if (['waiting', 'boarding', 'departed'].includes(r.status)) {
+                let ns = r.status;
+                if (diffMin <= 0) ns = 'departed';
+                else if (diffMin <= 30) ns = 'boarding';
+                else ns = 'waiting';
+
+                if (r.status !== ns) { r.status = ns; changed = true; }
+            }
+        });
+        if (changed) save();
+    }
+    setInterval(autoUpdateStatus, 15000);
+
     function addRoute() {
         const r = {
             id: Date.now().toString(),
@@ -212,8 +241,7 @@
             price: document.getElementById('a-price').value,
             status: 'waiting'
         };
-        if(!r.code || !r.to) return;
-        db.push(r); save();
+        if(r.code && r.to) { db.push(r); save(); }
     }
 
     function renderRoutes() {
@@ -237,13 +265,13 @@
     }
 
     function updateStats() {
-        let money = 0, count = 0;
+        let m = 0, c = 0;
         Object.keys(sales).forEach(id => {
             const r = db.find(x => x.id === id);
-            if(r) { count += sales[id].length; money += sales[id].length * parseInt(r.price); }
+            if(r) { c += sales[id].length; m += sales[id].length * parseInt(r.price); }
         });
-        document.getElementById('stat-money').innerText = money;
-        document.getElementById('stat-count').innerText = count;
+        document.getElementById('stat-money').innerText = m;
+        document.getElementById('stat-count').innerText = c;
         document.getElementById('stat-routes').innerText = db.length;
     }
 
@@ -278,12 +306,12 @@
         const w = words[lang];
         const tID = Math.floor(100000 + Math.random() * 900000);
         const now = new Date();
-        const pDate = now.toLocaleDateString() + " " + now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
+        const pDate = now.toLocaleString();
 
         document.getElementById('modalInner').innerHTML = `
             <div id="ticket-print" class="ticket-box">
                 <div class="t-top">
-                    <div style="display:flex; justify-content:space-between; font-size:10px;"><b>OSH TERMINAL PRO</b> <span>E-TICKET</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:10px;"><b>OSH TERMINAL PRO</b> <span>BOARDING PASS</span></div>
                     <h2 style="margin:15px 0 5px;">ОШ ➔ ${r.to.toUpperCase()}</h2>
                     <div style="font-size:9px; opacity:0.8;">${w.t_issue}: ${pDate}</div>
                 </div>
@@ -296,12 +324,12 @@
                     <div style="text-align:right;"><small style="color:#999;">${w.t_plate}</small><br><b>${r.num}</b></div>
                 </div>
                 <div class="t-divider"></div>
-                <div class="t-bottom" style="flex-direction: column; align-items: stretch;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div class="t-bottom" style="flex-direction: column; align-items: stretch; display: flex;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 20px;">
                         <div><small style="color:#999;">${w.t_seat}</small><br><b style="font-size:32px; color:var(--success); line-height:1;">${seat}</b></div>
                         <div id="qr"></div>
                     </div>
-                    <div style="border-top: 1px solid #eee; padding-top: 10px; text-align: left;">
+                    <div style="border-top: 1px solid #eee; padding: 15px 20px; text-align: left; background: #fafafa; border-radius: 0 0 20px 20px;">
                         <b style="font-size: 9px; color: var(--danger);">${w.t_warn}:</b>
                         <p style="font-size: 8px; color: #666; margin: 3px 0 0; line-height: 1.2;">${w.t_msg}</p>
                     </div>
@@ -312,7 +340,7 @@
                 <button class="btn-main" style="background:#fff; color:#333" onclick="closeModal()">${w.t_exit}</button>
             </div>
         `;
-        setTimeout(() => { new QRCode(document.getElementById("qr"), { text: "TKT-"+tID, width: 60, height: 60 }); }, 100);
+        setTimeout(() => { new QRCode(document.getElementById("qr"), { text: "VERIFY-"+tID, width: 60, height: 60 }); }, 100);
     }
 
     function renderAdmin() {
@@ -323,10 +351,12 @@
                 <tr style="border-bottom:1px solid #eee;">
                     <td style="padding:10px;">#${r.code}</td><td>${r.to}</td>
                     <td>
-                        <select onchange="updateStatus('${r.id}', this.value)" style="font-size:10px;">
-                            <option value="waiting" ${r.status==='waiting'?'selected':''}>Күтүүдө</option>
-                            <option value="boarding" ${r.status==='boarding'?'selected':''}>Отургузуу</option>
-                            <option value="departed" ${r.status==='departed'?'selected':''}>Кетти</option>
+                        <select onchange="updateStatus('${r.id}', this.value)" style="font-size:11px;">
+                            <option value="waiting" ${r.status==='waiting'?'selected':''}>${words[lang].waiting}</option>
+                            <option value="boarding" ${r.status==='boarding'?'selected':''}>${words[lang].boarding}</option>
+                            <option value="departed" ${r.status==='departed'?'selected':''}>${words[lang].departed}</option>
+                            <option value="delayed" ${r.status==='delayed'?'selected':''}>${words[lang].delayed}</option>
+                            <option value="cancelled" ${r.status==='cancelled'?'selected':''}>${words[lang].cancelled}</option>
                         </select>
                     </td>
                     <td><button onclick="deleteRoute('${r.id}')" style="border:none; background:none; cursor:pointer;">❌</button></td>
@@ -340,7 +370,15 @@
     function save() { localStorage.setItem('osh_pro_v1', JSON.stringify(db)); renderRoutes(); }
     function loginAdmin() { if(prompt("Pass:") === "admin777") document.getElementById('adminPanel').style.display = 'block'; }
     function closeModal() { document.getElementById('modal').style.display = 'none'; }
-    function downloadTicket() { html2canvas(document.getElementById('ticket-print')).then(c => { const a = document.createElement('a'); a.download = 'ticket.png'; a.href = c.toDataURL(); a.click(); }); }
+    function downloadTicket() { 
+        html2canvas(document.getElementById('ticket-print'), { scale: 2 }).then(canvas => { 
+            const link = document.createElement('a');
+            link.download = 'OshTerminal-Ticket.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }); 
+    }
+
     window.onload = translatePage;
 </script>
 </body>
