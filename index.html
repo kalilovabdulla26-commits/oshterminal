@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Osh Terminal | Official Booking System</title>
+    <title>Osh Terminal Pro | 2025</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -11,89 +11,79 @@
 
     <style>
         :root { 
-            --main: #0044cc; --accent: #ffcc00; --success: #2ecc71; 
-            --danger: #e74c3c; --bg: #f4f7fa; --white: #ffffff;
-            --waiting: #95a5a6; --departed: #8b4513;
+            --primary: #0044cc; --accent: #ffcc00; --success: #2ecc71; 
+            --danger: #e74c3c; --bg: #f0f2f5; --white: #ffffff; --dark: #1a1a1a;
         }
         
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--dark); overflow-x: hidden; }
 
         header { 
-            background: var(--white); padding: 12px 8%; 
+            background: var(--white); padding: 15px 8%; 
             display: flex; justify-content: space-between; align-items: center; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top:0; z-index:1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: sticky; top:0; z-index:1000;
         }
-        .logo-box { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
         .logo-icon { 
-            background: var(--main); width: 45px; height: 45px; border-radius: 12px; 
-            display: flex; align-items: center; justify-content: center; border: 2px solid var(--accent);
+            background: var(--primary); width: 45px; height: 45px; border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: 900; font-size: 24px;
         }
-        .logo-icon span { color: var(--accent); font-weight: 900; font-size: 22px; }
-        .logo-text b { color: var(--main); font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
 
         .hero { 
-            background: linear-gradient(rgba(0,40,120,0.7), rgba(0,40,120,0.7)), 
-            url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=1200'); 
-            background-size: cover; background-position: center;
-            padding: 80px 8% 100px; text-align: center; color: white;
+            background: linear-gradient(135deg, rgba(0,68,204,0.9), rgba(0,34,136,0.9)), url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=1200');
+            background-size: cover; background-position: center; padding: 60px 8% 100px; text-align: center; color: white;
         }
 
-        .search-wrapper { max-width: 1100px; margin: -50px auto 40px; padding: 0 20px; position: relative; z-index: 100; }
-        .search-main { 
-            background: #fff; display: flex; flex-wrap: wrap; padding: 10px; 
-            border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        .search-container { max-width: 1000px; margin: -50px auto 40px; padding: 0 20px; }
+        .search-bar { 
+            background: white; padding: 15px; border-radius: 25px; display: flex; flex-wrap: wrap; gap: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15); align-items: center;
         }
-        .search-field { flex: 1; min-width: 180px; padding: 10px 20px; border-right: 1px solid #eee; display: flex; flex-direction: column; }
-        .search-field:last-child { border-right: none; }
-        .search-field label { font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; }
-        .search-field select, .search-field input { border: none; font-weight: 700; padding: 5px 0; font-family: inherit; outline: none; background: transparent; }
-        .search-btn { background: var(--main); color: white; border: none; padding: 15px 35px; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .search-group { flex: 1; min-width: 150px; display: flex; flex-direction: column; padding: 0 15px; border-right: 1px solid #eee; }
+        .search-group:last-child { border: none; }
+        .search-group label { font-size: 10px; font-weight: 800; color: #999; margin-bottom: 5px; }
+        .search-group select, .search-group input { border: none; font-weight: 700; outline: none; font-size: 15px; background: none; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 18px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-main:hover { background: #0033aa; transform: scale(1.02); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary); }
+        .stat-card h3 { margin: 10px 0 0; font-size: 28px; color: var(--primary); }
+        .stat-card p { margin: 0; font-size: 12px; color: #777; font-weight: 600; text-transform: uppercase; }
 
         section { padding: 40px 8%; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-        
-        .card { 
-            background: var(--white); padding: 30px; border-radius: 20px; 
-            position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-top: 5px solid var(--main);
-            transition: 0.3s;
+        .route-card { 
+            background: white; border-radius: 25px; padding: 25px; position: relative; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05); transition: 0.3s; border-top: 6px solid var(--primary);
         }
-        .card-departed { background: #fdf5e6 !important; border-top: 5px solid var(--departed) !important; opacity: 0.8; }
+        .status-tag { position: absolute; top: 15px; right: 20px; padding: 6px 14px; border-radius: 20px; font-size: 10px; font-weight: 800; }
+        .st-waiting { background: #f0f0f0; color: #888; }
+        .st-boarding { background: #e3f2fd; color: #1976d2; }
+        .st-departed { background: #efebe9; color: #5d4037; }
 
-        .status-badge { position: absolute; top: 15px; right: 15px; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-        .st-waiting { background: #eee; color: #777; }
-        .st-boarding { background: #e8f0fe; color: var(--main); }
-        .st-departed { background: var(--departed); color: white; }
-        .st-cancelled { background: #feebeb; color: var(--danger); }
+        .ticket-box { width: 100%; max-width: 400px; margin: auto; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.4)); text-align: left; }
+        .t-top { background: linear-gradient(135deg, #0044cc, #002288); color: white; padding: 20px; border-radius: 20px 20px 0 0; }
+        .t-mid { background: white; padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; }
+        .t-divider { height: 20px; background: white; border-top: 2px dashed #ddd; position: relative; }
+        .t-divider::before, .t-divider::after { content:''; position: absolute; width:20px; height:20px; border-radius:50%; background:#1a1a1a; top:-11px; }
+        .t-divider::before { left: -10px; } .t-divider::after { right: -10px; }
+        .t-bottom { background: white; padding: 20px; border-radius: 0 0 20px 20px; display: flex; justify-content: space-between; align-items: center; }
 
-        .bus-wrapper { background: #333; padding: 25px 15px; border-radius: 35px 35px 15px 15px; max-width: 220px; margin: 20px auto; border: 4px solid #555; }
-        .bus-front { height: 35px; background: #444; margin-bottom: 20px; border-radius: 25px; color: #777; font-size: 9px; display: flex; align-items: center; justify-content: center; }
-        .bus-grid { display: grid; grid-template-columns: repeat(2, 1fr) 20px repeat(2, 1fr); gap: 10px; }
-        .seat { width: 38px; height: 38px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; }
-        .seat-green { background: var(--success); box-shadow: 0 3px 0 #27ae60; }
-        .seat-red { background: var(--danger); cursor: not-allowed; opacity: 0.5; }
-
-        #adminPanel { display: none; background: #fff; padding: 30px; border-top: 5px solid var(--danger); margin: 20px 8%; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .admin-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
-        .admin-table td, .admin-table th { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; padding: 20px; overflow-y: auto; align-items: center; justify-content: center; }
-        .box { background: white; width: 100%; max-width: 450px; border-radius: 25px; overflow: hidden; }
-        
-        .service-card { text-align: center; padding: 30px; background: white; border-radius: 20px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .service-icon { font-size: 40px; margin-bottom: 15px; display: block; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        #adminPanel { display: none; background: white; margin: 20px 8%; padding: 30px; border-radius: 30px; border: 2px solid #eee; }
     </style>
 </head>
 <body>
 
 <header>
     <a href="#" class="logo-box">
-        <div class="logo-icon"><span>O</span></div>
-        <div class="logo-text"><b id="t_logo">Ош Автобекет</b></div>
+        <div class="logo-icon">O</div>
+        <div style="line-height: 1;"><b>OSH</b><br><small>TERMINAL</small></div>
     </a>
-    <div style="display:flex; gap:15px; align-items:center;">
-        <button onclick="loginAdmin()" style="background:none; border:none; color:var(--danger); font-weight:800; cursor:pointer;">ADMIN</button>
-        <select id="langSwitch" onchange="changeLang()" style="padding:8px; border-radius:10px; font-weight:700; border:1px solid #ddd;">
-            <option value="ky">KY</option>
+    <div style="display:flex; gap:15px;">
+        <button onclick="loginAdmin()" style="border:none; background:none; color:var(--danger); cursor:pointer; font-weight:800;">ADMIN</button>
+        <select id="lang" onchange="translatePage()" style="padding: 5px; border-radius: 8px; font-weight: bold;">
+            <option value="ky">KG</option>
             <option value="ru">RU</option>
             <option value="en">EN</option>
         </select>
@@ -101,331 +91,257 @@
 </header>
 
 <div class="hero">
-    <h1 id="h_title">Сапарыңыз байсалдуу болсун!</h1>
-    <p id="h_desc">Ош шаарынын заманбап маалыматтык системасы</p>
+    <h1 id="h-title">Сапарыңыз байсалдуу болсун!</h1>
+    <p id="h-desc">Ош шаарынын заманбап онлайн брондоо системасы</p>
 </div>
 
-<div class="search-wrapper">
-    <div class="search-main">
-        <div class="search-field">
-            <label id="l_from">Кайдан</label>
-            <select id="s_from"><option>Ош</option></select>
-        </div>
-        <div class="search-field">
-            <label id="l_to">Каякка</label>
-            <select id="s_to">
+<div class="search-container">
+    <div class="search-bar">
+        <div class="search-group">
+            <label id="l-to">КАЯККА</label>
+            <select id="s-to">
                 <option value="Бишкек">Бишкек</option>
                 <option value="Жалал-Абад">Жалал-Абад</option>
                 <option value="Баткен">Баткен</option>
+                <option value="Нарын">Нарын</option>
             </select>
         </div>
-        <div class="search-field">
-            <label id="l_date">Дата</label>
-            <input type="date" id="s_date">
+        <div class="search-group">
+            <label id="l-date">ДАТА</label>
+            <input type="date" id="s-date">
         </div>
-        <div class="search-field" style="border:none; justify-content:center;">
-            <button class="search-btn" onclick="render()" id="b_search">ИЗДӨӨ</button>
-        </div>
+        <button class="btn-main" id="b-search" onclick="renderRoutes()">ИЗДӨӨ</button>
     </div>
 </div>
+
+<section id="adminPanel">
+    <h2 id="a-title">Башкаруу жана Статистика</h2>
+    <div class="stats-grid">
+        <div class="stat-card"><p id="st-1">Киреше</p><h3 id="stat-money">0</h3></div>
+        <div class="stat-card"><p id="st-2">Билеттер</p><h3 id="stat-count">0</h3></div>
+        <div class="stat-card"><p id="st-3">Рейстер</p><h3 id="stat-routes">0</h3></div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; background: #f9f9f9; padding: 20px; border-radius: 20px;">
+        <input id="a-code" placeholder="Код">
+        <input id="a-to" placeholder="Каякка">
+        <input id="a-date" type="date">
+        <input id="a-time" type="time">
+        <input id="a-car" placeholder="Унаа">
+        <input id="a-num" placeholder="Номер">
+        <input id="a-price" type="number" placeholder="Баасы">
+        <button class="btn-main" style="background:var(--success)" onclick="addRoute()">OK</button>
+    </div>
+    <div style="overflow-x: auto; margin-top: 20px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead><tr style="text-align: left; color: #888;"><th>ID</th><th>TO</th><th>STATUS</th><th>X</th></tr></thead>
+            <tbody id="adminTable"></tbody>
+        </table>
+    </div>
+</section>
 
 <section>
-    <h2 id="t_board">Рейстердин таблосу</h2>
-    <div class="grid" id="routesList"></div>
+    <h2 id="t-board">Рейстердин таблосу</h2>
+    <div class="grid" id="routesGrid"></div>
 </section>
 
-<section style="background:#f0f3f8; border-radius: 50px 50px 0 0;">
-    <h2 id="t_services" style="text-align:center;">Биздин кызматтар</h2>
-    <div class="grid">
-        <div class="service-card"><span class="service-icon">🎟️</span><h3 id="s1_t">Онлайн Билет</h3><p id="s1_d">Билетти 2 мүнөттө алыңыз</p></div>
-        <div class="service-card"><span class="service-icon">📦</span><h3 id="s2_t">Посылка</h3><p id="s2_d">Жүктөрдү тез жеткирүү</p></div>
-        <div class="service-card"><span class="service-icon">🛋️</span><h3 id="s3_t">VIP Зал</h3><p id="s3_d">Ыңгайлуу шарттар</p></div>
-    </div>
-</section>
-
-<div id="adminPanel">
-    <h2 style="margin-top:0;">Башкаруу панели</h2>
-    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px; background:#f9f9f9; padding:20px; border-radius:15px;">
-        <input id="a_code" placeholder="Код (№777)">
-        <input id="a_to" placeholder="Каякка">
-        <input id="a_date" type="date">
-        <input id="a_time" type="time">
-        <input id="a_car" placeholder="Унаа №">
-        <input id="a_price" type="number" placeholder="Баасы">
-        <button class="search-btn" style="background:var(--success);" onclick="addRoute()">Кошуу</button>
-    </div>
-    <table class="admin-table">
-        <thead><tr><th>Код</th><th>Багыт</th><th>Дата/Убакыт</th><th>Баасы</th><th>Статус</th><th>Аракет</th></tr></thead>
-        <tbody id="adminBody"></tbody>
-    </table>
-</div>
-
-<footer style="padding:40px; text-align:center; background:#1a1a1a; color:white; margin-top:50px;">
-    © 2025 Osh Bus Terminal | Developer: <b>Abdulla Kalilov</b>
-</footer>
-
-<div id="modal" class="modal"><div class="box" id="modalContent"></div></div>
+<div id="modal" class="modal"><div id="modalInner"></div></div>
 
 <script>
-    // --- Telegram Бот маалыматтары (ӨЗҮҢҮЗДҮКҮН КОЮҢУЗ) ---
-    const TG_TOKEN = "ВАШ_БОТ_ТОКЕН"; 
-    const TG_CHAT_ID = "ВАШ_ЧАТ_ID";
+    let db = JSON.parse(localStorage.getItem('osh_pro_v1')) || [];
+    let sales = JSON.parse(localStorage.getItem('osh_pro_sales')) || {};
+    let lang = 'ky';
 
-    let currentLang = 'ky';
-    const dict = {
-        ky: { t_logo: "Ош Автобекет", h_title: "Сапарыңыз байсалдуу болсун!", h_desc: "Заманбап тейлөө системасы", l_from: "Кайдан", l_to: "Каякка", l_date: "Дата", b_search: "ИЗДӨӨ", t_board: "Рейстердин таблосу", t_services: "Биздин кызматтар", s1_t: "Онлайн Билет", s1_d: "Тез брондоо", s2_t: "Посылка", s2_d: "Жүктөрдү жеткирүү", s3_t: "VIP Зал", s3_d: "Ыңгайлуу шарттар", buy: "Билет алуу", departed: "Кетти", waiting: "Күтүлүүдө", boarding: "Отургузуу", cancelled: "Кайтарылды" },
-        ru: { t_logo: "Ош Автовокзал", h_title: "Счастливого пути!", h_desc: "Современная система обслуживания", l_from: "Откуда", l_to: "Куда", l_date: "Дата", b_search: "ПОИСК", t_board: "Табло рейсов", t_services: "Наши услуги", s1_t: "Онлайн Билет", s1_d: "Быстрое бронирование", s2_t: "Посылка", s2_d: "Доставка грузов", s3_t: "VIP Зал", s3_d: "Комфортные условия", buy: "Купить билет", departed: "Уехал", waiting: "Ожидание", boarding: "Посадка", cancelled: "Отменен" },
-        en: { t_logo: "Osh Terminal", h_title: "Have a nice trip!", h_desc: "Modern service system", l_from: "From", l_to: "To", l_date: "Date", b_search: "SEARCH", t_board: "Flight Board", t_services: "Our Services", s1_t: "Online Ticket", s1_d: "Fast booking", s2_t: "Parcel", s2_d: "Cargo delivery", s3_t: "VIP Hall", s3_d: "Comfort conditions", buy: "Buy Ticket", departed: "Departed", waiting: "Waiting", boarding: "Boarding", cancelled: "Cancelled" }
+    const words = {
+        ky: { 
+            h_title: "Сапарыңыз байсалдуу болсун!", h_desc: "Ош шаарынын заманбап онлайн брондоо системасы",
+            l_to: "КАЯККА", l_date: "ДАТА", b_search: "ИЗДӨӨ", t_board: "Рейстердин таблосу",
+            buy: "Билет алуу", waiting: "Күтүүдө", boarding: "Отургузуу", departed: "Кетти", delayed: "Кармалды",
+            st_1: "Киреше", st_2: "Билеттер", st_3: "Рейстер", a_title: "Башкаруу жана Статистика",
+            m_seat: "Орун тандаңыз", m_close: "Жабуу", p_name: "Аты-жөнүңүз:",
+            t_issue: "Сатылган күнү", t_pass: "ЖҮРГҮНЧҮ", t_num: "БИЛЕТ №", t_date: "КҮНҮ", t_time: "УБАКТЫ", t_car: "УНАА", t_plate: "МАМ. НОМЕР", t_seat: "ОРУН",
+            t_warn: "ЭСКЕРТҮҮ", t_msg: "* Унаа жөнөргө 30 мүнөт калганда келиңиз.<br>* Билетти айдоочуга көрсөтүңүз.",
+            t_save: "САКТОО (PNG)", t_exit: "ЧЫГУУ"
+        },
+        ru: { 
+            h_title: "Счастливого пути!", h_desc: "Современная система бронирования города Ош",
+            l_to: "КУДА", l_date: "ДАТА", b_search: "ПОИСК", t_board: "Табло рейсов",
+            buy: "Купить билет", waiting: "Ожидание", boarding: "Посадка", departed: "Уехал", delayed: "Задержан",
+            st_1: "Доход", st_2: "Билеты", st_3: "Рейсы", a_title: "Управление и Статистика",
+            m_seat: "Выберите место", m_close: "Закрыть", p_name: "Ваше имя:",
+            t_issue: "Дата продажи", t_pass: "ПАССАЖИР", t_num: "БИЛЕТ №", t_date: "ДАТА", t_time: "ВРЕМЯ", t_car: "АВТО", t_plate: "ГОС. НОМЕР", t_seat: "МЕСТО",
+            t_warn: "ВНИМАНИЕ", t_msg: "* Прибудьте за 30 минут до выезда.<br>* Покажите билет водителю.",
+            t_save: "СОХРАНИТЬ", t_exit: "ВЫХОД"
+        },
+        en: { 
+            h_title: "Have a nice trip!", h_desc: "Modern booking system of Osh city",
+            l_to: "TO", l_date: "DATE", b_search: "SEARCH", t_board: "Departure Board",
+            buy: "Get Ticket", waiting: "Waiting", boarding: "Boarding", departed: "Departed", delayed: "Delayed",
+            st_1: "Revenue", st_2: "Tickets", st_3: "Routes", a_title: "Admin & Statistics",
+            m_seat: "Select Seat", m_close: "Close", p_name: "Full Name:",
+            t_issue: "Date of Issue", t_pass: "PASSENGER", t_num: "TICKET №", t_date: "DATE", t_time: "TIME", t_car: "VEHICLE", t_plate: "PLATE", t_seat: "SEAT",
+            t_warn: "ATTENTION", t_msg: "* Arrive 30 minutes before departure.<br>* Show this ticket to the driver.",
+            t_save: "SAVE PNG", t_exit: "EXIT"
+        }
     };
 
-    let routes = JSON.parse(localStorage.getItem('osh_final_db_v7')) || [];
-    let booked = JSON.parse(localStorage.getItem('osh_booked_v7')) || {};
-
-    function changeLang() {
-        currentLang = document.getElementById('langSwitch').value;
-        Object.keys(dict[currentLang]).forEach(id => {
-            if(document.getElementById(id)) document.getElementById(id).innerText = dict[currentLang][id];
-        });
-        initialLoad();
-    }
-
-    function createCardHTML(r) {
-        const isDep = r.status === 'departed';
-        return `
-            <div class="card ${isDep ? 'card-departed' : ''}">
-                <span class="status-badge st-${r.status}">${dict[currentLang][r.status]}</span>
-                <small style="color:var(--main); font-weight:800;">#${r.code}</small>
-                <h3 style="margin:10px 0;">Ош ➔ ${r.to}</h3>
-                <p style="font-size:14px; color:#666;">📅 ${r.date} | ⏰ ${r.time}<br>🚐 ${r.car}</p>
-                <div style="font-weight:800; color:var(--success); font-size:18px; margin:15px 0;">${r.price} СОМ</div>
-                <button class="search-btn" style="width:100%; ${isDep?'background:#888':''}" 
-                    onclick="openSeats('${r.id}')" ${isDep?'disabled':''}>${dict[currentLang].buy}</button>
-            </div>`;
-    }
-
-    function render() {
-        const list = document.getElementById('routesList');
-        const f_to = document.getElementById('s_to').value;
-        const f_date = document.getElementById('s_date').value;
-        list.innerHTML = "";
-        
-        routes.forEach(r => {
-            if (r.to === f_to && (!f_date || r.date === f_date)) {
-                list.innerHTML += createCardHTML(r);
-            }
-        });
-    }
-
-    function initialLoad() {
-        const list = document.getElementById('routesList');
-        list.innerHTML = "";
-        const now = new Date();
-        routes.forEach(r => {
-            const depTime = new Date(`${r.date}T${r.time}`);
-            if (!(r.status === 'departed' && now > new Date(depTime.getTime() + 3600000))) {
-                list.innerHTML += createCardHTML(r);
-            }
-        });
-        renderAdminTable();
-    }
-
-    function renderAdminTable() {
-        const body = document.getElementById('adminBody');
-        if(!body) return;
-        body.innerHTML = "";
-        routes.forEach(r => {
-            body.innerHTML += `
-                <tr>
-                    <td>#${r.code}</td>
-                    <td><b>${r.to}</b></td>
-                    <td>${r.date}<br><small>${r.time}</small></td>
-                    <td>${r.price} с.</td>
-                    <td>
-                        <select onchange="updateStatus('${r.id}', this.value)">
-                            <option value="waiting" ${r.status==='waiting'?'selected':''}>Күтүүдө</option>
-                            <option value="boarding" ${r.status==='boarding'?'selected':''}>Отургузуу</option>
-                            <option value="departed" ${r.status==='departed'?'selected':''}>Кетти</option>
-                            <option value="cancelled" ${r.status==='cancelled'?'selected':''}>Кайтарылды</option>
-                        </select>
-                    </td>
-                    <td><button onclick="deleteRoute('${r.id}')" style="color:red; border:none; background:none; cursor:pointer;">❌</button></td>
-                </tr>`;
-        });
-    }
-
-    function openSeats(id) {
-        const r = routes.find(x => x.id === id);
-        if(!booked[id]) booked[id] = [];
-        let seatsHTML = "";
-        for(let i=1; i<=20; i++) {
-            const isTaken = booked[id].includes(i);
-            seatsHTML += `<div class="seat ${isTaken?'seat-red':'seat-green'}" onclick="${isTaken?'':'askInfo(\''+id+'\','+i+')'}">${i}</div>`;
-            if(i % 2 === 0 && i % 4 !== 0) seatsHTML += `<div style="grid-column: 3;"></div>`;
-        }
-        document.getElementById('modalContent').innerHTML = `
-            <div style="padding:20px; text-align:center;">
-                <h3>Орун тандаңыз (#${r.code})</h3>
-                <div class="bus-wrapper"><div class="bus-front">FRONT</div><div class="bus-grid">${seatsHTML}</div></div>
-                <button class="search-btn" style="background:#888; width:100%;" onclick="closeModal()">Жабуу</button>
-            </div>`;
-        document.getElementById('modal').style.display = 'flex';
-    }
-
-    function askInfo(id, seat) {
-        document.getElementById('modalContent').innerHTML = `
-            <div style="padding:30px; text-align:left;">
-                <h3 style="text-align:center;">Маалыматтар</h3>
-                <input id="uName" placeholder="Аты-жөнүңүз" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
-                <input id="uPhone" placeholder="WhatsApp (996...)" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
-                <input id="uEmail" placeholder="Email почта" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
-                <button class="search-btn" style="width:100%; background:var(--success);" onclick="confirmPayment('${id}', ${seat})">Ырастоо</button>
-            </div>`;
-    }
-
-    function confirmPayment(id, seat) {
-        const name = document.getElementById('uName').value;
-        const phone = document.getElementById('uPhone').value;
-        const email = document.getElementById('uEmail').value;
-        if(!name || !phone) return alert("Толтуруңуз!");
-
-        const tID = 'TKT-' + Math.floor(100000 + Math.random() * 900000);
-        if(!booked[id]) booked[id] = [];
-        booked[id].push(seat);
-        localStorage.setItem('osh_booked_v7', JSON.stringify(booked));
-        
-        const r = routes.find(x => x.id === id);
-
-        // Telegram билдирүү
-        const msg = `🔔 <b>ЖАҢЫ БИЛЕТ!</b>\n🎫 №: ${tID}\n👤: ${name}\n📞: ${phone}\n📍: Ош- ${r.to}\n💺: Орун №${seat}`;
-        sendToTelegram(msg);
-
-        showFinalTicket(r, name, seat, email, tID, phone);
-    }
-function showFinalTicket(r, name, seat, email, tID, phone) {
-    const purchaseTime = new Date().toLocaleString();
-    const verifyURL = `${window.location.href}?verify=${tID}`; 
-
-    document.getElementById('modalContent').innerHTML = `
-        <div id="ticket-to-print" style="background:white; border-radius:25px; overflow:hidden; border:2px solid #1a2a6c; width:380px; margin:auto; font-family: 'Montserrat', sans-serif;">
-            <div style="background:#1a2a6c; color:white; padding:20px; text-align:center;">
-                <h2 style="margin:0; letter-spacing:2px;">OSH TERMINAL</h2>
-                <div style="font-size:12px; opacity:0.8; margin-top:5px;">ELECTRONIC BOARDING PASS</div>
-            </div>
-
-            <div style="padding:20px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <div><small style="color:#888;">БАГЫТ</small><br><b style="font-size:18px;">ОШ ➔ ${r.to.toUpperCase()}</b></div>
-                    <div style="text-align:right;"><small style="color:#888;">БИЛЕТ №</small><br><b>${tID}</b></div>
-                </div>
-
-                <div style="background:#f8f9fa; border:2px solid #eee; border-radius:15px; padding:15px; display:flex; justify-content:space-around; align-items:center; margin-bottom:20px;">
-                    <div style="text-align:center;">
-                        <small style="color:#e74c3c; font-weight:800;">КЕТҮҮ КҮНҮ</small><br>
-                        <b style="font-size:20px; color:#333;">${r.date}</b>
-                    </div>
-                    <div style="width:1px; height:40px; background:#ccc;"></div>
-                    <div style="text-align:center;">
-                        <small style="color:#e74c3c; font-weight:800;">КЕТҮҮ СААТЫ</small><br>
-                        <b style="font-size:24px; color:#1a2a6c;">${r.time}</b>
-                    </div>
-                </div>
-
-                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                    <div><small style="color:#888;">ЖҮРГҮНЧҮ</small><br><b>${name}</b></div>
-                    <div style="text-align:right;"><small style="color:#888;">ОРУН</small><br><b style="font-size:22px; color:#27ae60;">№${seat}</b></div>
-                </div>
-
-                <div style="text-align:center; padding:10px; border-top:1px dashed #ccc;">
-                    <div id="qrcode" style="display:inline-block; padding:10px; background:#fff;"></div>
-                    <p style="font-size:11px; color:#555; margin-top:5px;">Билетти текшерүү үчүн сканерлеңиз</p>
-                </div>
-
-                <div style="background:#fff3cd; padding:12px; border-radius:10px; font-size:11px; color:#856404; line-height:1.4;">
-                    <b>⚠️ ЭСКЕРТҮҮ:</b> Автобус саат <b>${r.time}</b>до так жөнөйт. Кетүү убактысынан 30 мүнөт мурун келишиңизди суранабыз.
-                </div>
-                
-                <p style="font-size:10px; color:#aaa; text-align:center; margin-top:15px;">Сатып алынган убакыт: ${purchaseTime}</p>
-            </div>
-        </div>
-
-        <div style="padding:15px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button class="search-btn" style="background:#27ae60;" onclick="downloadTicket('${tID}')">📥 Жүктөө (PNG)</button>
-            <button class="search-btn" style="background:#333;" onclick="closeModal()">Жабуу</button>
-        </div>`;
-    
-    setTimeout(() => { 
-        new QRCode(document.getElementById("qrcode"), { 
-            text: verifyURL, 
-            width: 130, 
-            height: 130,
-            colorDark : "#1a2a6c"
-        }); 
-    }, 150);
-}
-    setTimeout(() => { 
-        new QRCode(document.getElementById("qrcode"), { 
-            text: verifyURL, 
-            width: 120, 
-            height: 120,
-            colorDark : "#1a2a6c"
-        }); 
-    }, 150);
-}
-
-    function downloadTicket(tID) {
-        html2canvas(document.getElementById('ticket-to-print')).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `Ticket_${tID}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
-        });
-    }
-
-    function sendToTelegram(msg) {
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chat_id: TG_CHAT_ID, text: msg, parse_mode: "HTML" })
-        });
+    function translatePage() {
+        lang = document.getElementById('lang').value;
+        const w = words[lang];
+        document.getElementById('h-title').innerText = w.h_title;
+        document.getElementById('h-desc').innerText = w.h_desc;
+        document.getElementById('l-to').innerText = w.l_to;
+        document.getElementById('l-date').innerText = w.l_date;
+        document.getElementById('b-search').innerText = w.b_search;
+        document.getElementById('t-board').innerText = w.t_board;
+        document.getElementById('st-1').innerText = w.st_1;
+        document.getElementById('st-2').innerText = w.st_2;
+        document.getElementById('st-3').innerText = w.st_3;
+        document.getElementById('a-title').innerText = w.a_title;
+        renderRoutes();
     }
 
     function addRoute() {
-        const r = { id: Date.now().toString(), code: a_code.value, to: a_to.value, date: a_date.value, time: a_time.value, car: a_car.value, price: a_price.value, status: 'waiting' };
-        if(!r.code || !r.to) return alert("Толтуруңуз!");
-        routes.push(r);
-        save();
+        const r = {
+            id: Date.now().toString(),
+            code: document.getElementById('a-code').value,
+            to: document.getElementById('a-to').value,
+            date: document.getElementById('a-date').value,
+            time: document.getElementById('a-time').value,
+            car: document.getElementById('a-car').value,
+            num: document.getElementById('a-num').value,
+            price: document.getElementById('a-price').value,
+            status: 'waiting'
+        };
+        if(!r.code || !r.to) return;
+        db.push(r); save();
     }
 
-    function updateStatus(id, s) { 
-        const i = routes.findIndex(x => x.id === id); 
-        routes[i].status = s; 
-        save(); 
-        alert("Статус өзгөрдү!");
+    function renderRoutes() {
+        const grid = document.getElementById('routesGrid');
+        grid.innerHTML = "";
+        db.forEach(r => {
+            const stText = words[lang][r.status] || r.status;
+            grid.innerHTML += `
+                <div class="route-card">
+                    <span class="status-tag st-${r.status}">${stText}</span>
+                    <small>#${r.code}</small>
+                    <h3 style="margin: 10px 0;">ОШ ➔ ${r.to.toUpperCase()}</h3>
+                    <p style="font-size:13px; color:#777;">📅 ${r.date} | ⏰ ${r.time}<br>🚐 ${r.car} (${r.num})</p>
+                    <div style="font-size: 22px; font-weight: 800; color: var(--success); margin: 15px 0;">${r.price} SOM</div>
+                    <button class="btn-main" style="width: 100%;" onclick="openBooking('${r.id}')">${words[lang].buy}</button>
+                </div>
+            `;
+        });
+        renderAdmin();
+        updateStats();
     }
-    
-    function deleteRoute(id) { if(confirm("Өчүрүлсүнбү?")) { routes = routes.filter(x => x.id !== id); save(); } }
-    function save() { localStorage.setItem('osh_final_db_v7', JSON.stringify(routes)); initialLoad(); }
-    function loginAdmin() { if(prompt("Сыр сөз:") === "admin777") document.getElementById('adminPanel').style.display='block'; }
-    function closeModal() { document.getElementById('modal').style.display = 'none'; initialLoad(); }
 
-    window.onload = initialLoad;
-window.onload = function() {
-    // 1. Таблону жүктөө
-    initialLoad(); 
-
-    // 2. QR-код сканерлөөнү текшерүү (URL аркылуу)
-    const urlParams = new URLSearchParams(window.location.search);
-    const verifyID = urlParams.get('verify');
-    
-    if (verifyID) {
-        // Кичинекей кечигүү менен билдирүү чыгаруу
-        setTimeout(() => {
-            alert(`✅ БИЛЕТ ТАСТЫКТАЛДЫ!\n\nБилет номери: ${verifyID}\nСтатусу: Жарактуу\nОш Автобекет сизди күтөт!`);
-            // URL'ди тазалап коюу (кайра-кайра чыга бербеши үчүн)
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }, 500);
+    function updateStats() {
+        let money = 0, count = 0;
+        Object.keys(sales).forEach(id => {
+            const r = db.find(x => x.id === id);
+            if(r) { count += sales[id].length; money += sales[id].length * parseInt(r.price); }
+        });
+        document.getElementById('stat-money').innerText = money;
+        document.getElementById('stat-count').innerText = count;
+        document.getElementById('stat-routes').innerText = db.length;
     }
-};
+
+    function openBooking(id) {
+        const r = db.find(x => x.id === id);
+        if(!sales[id]) sales[id] = [];
+        let seats = "";
+        for(let i=1; i<=16; i++) {
+            const taken = sales[id].includes(i);
+            seats += `<div onclick="${taken?'':'confirmBook(\''+id+'\','+i+')'}" style="width:35px; height:35px; background:${taken?'#ddd':'#2ecc71'}; color:white; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:800; font-size:12px;">${i}</div>`;
+        }
+        document.getElementById('modalInner').innerHTML = `
+            <div style="background:white; padding:30px; border-radius:30px; text-align:center; max-width:350px;">
+                <h3>${r.to} | ${words[lang].m_seat}</h3>
+                <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin:20px 0;">${seats}</div>
+                <button class="btn-main" style="background:#333; width:100%;" onclick="closeModal()">${words[lang].m_close}</button>
+            </div>
+        `;
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function confirmBook(id, seat) {
+        const name = prompt(words[lang].p_name);
+        if(!name) return;
+        sales[id].push(seat);
+        localStorage.setItem('osh_pro_sales', JSON.stringify(sales));
+        showTicket(id, name, seat);
+    }
+
+    function showTicket(id, name, seat) {
+        const r = db.find(x => x.id === id);
+        const w = words[lang];
+        const tID = Math.floor(100000 + Math.random() * 900000);
+        const now = new Date();
+        const pDate = now.toLocaleDateString() + " " + now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
+
+        document.getElementById('modalInner').innerHTML = `
+            <div id="ticket-print" class="ticket-box">
+                <div class="t-top">
+                    <div style="display:flex; justify-content:space-between; font-size:10px;"><b>OSH TERMINAL PRO</b> <span>E-TICKET</span></div>
+                    <h2 style="margin:15px 0 5px;">ОШ ➔ ${r.to.toUpperCase()}</h2>
+                    <div style="font-size:9px; opacity:0.8;">${w.t_issue}: ${pDate}</div>
+                </div>
+                <div class="t-mid">
+                    <div><small style="color:#999;">${w.t_pass}</small><br><b>${name}</b></div>
+                    <div style="text-align:right;"><small style="color:#999;">${w.t_num}</small><br><b style="color:var(--danger);">${tID}</b></div>
+                    <div><small style="color:#999;">${w.t_date}</small><br><b>${r.date}</b></div>
+                    <div style="text-align:right;"><small style="color:#999;">${w.t_time}</small><br><b style="font-size:18px; color:var(--primary);">${r.time}</b></div>
+                    <div><small style="color:#999;">${w.t_car}</small><br><b>${r.car}</b></div>
+                    <div style="text-align:right;"><small style="color:#999;">${w.t_plate}</small><br><b>${r.num}</b></div>
+                </div>
+                <div class="t-divider"></div>
+                <div class="t-bottom" style="flex-direction: column; align-items: stretch;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div><small style="color:#999;">${w.t_seat}</small><br><b style="font-size:32px; color:var(--success); line-height:1;">${seat}</b></div>
+                        <div id="qr"></div>
+                    </div>
+                    <div style="border-top: 1px solid #eee; padding-top: 10px; text-align: left;">
+                        <b style="font-size: 9px; color: var(--danger);">${w.t_warn}:</b>
+                        <p style="font-size: 8px; color: #666; margin: 3px 0 0; line-height: 1.2;">${w.t_msg}</p>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+                <button class="btn-main" style="background:var(--success)" onclick="downloadTicket()">${w.t_save}</button>
+                <button class="btn-main" style="background:#fff; color:#333" onclick="closeModal()">${w.t_exit}</button>
+            </div>
+        `;
+        setTimeout(() => { new QRCode(document.getElementById("qr"), { text: "TKT-"+tID, width: 60, height: 60 }); }, 100);
+    }
+
+    function renderAdmin() {
+        const table = document.getElementById('adminTable');
+        table.innerHTML = "";
+        db.forEach(r => {
+            table.innerHTML += `
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:10px;">#${r.code}</td><td>${r.to}</td>
+                    <td>
+                        <select onchange="updateStatus('${r.id}', this.value)" style="font-size:10px;">
+                            <option value="waiting" ${r.status==='waiting'?'selected':''}>Күтүүдө</option>
+                            <option value="boarding" ${r.status==='boarding'?'selected':''}>Отургузуу</option>
+                            <option value="departed" ${r.status==='departed'?'selected':''}>Кетти</option>
+                        </select>
+                    </td>
+                    <td><button onclick="deleteRoute('${r.id}')" style="border:none; background:none; cursor:pointer;">❌</button></td>
+                </tr>
+            `;
+        });
+    }
+
+    function updateStatus(id, st) { const i = db.findIndex(x => x.id === id); db[i].status = st; save(); }
+    function deleteRoute(id) { if(confirm("Delete?")) { db = db.filter(x => x.id !== id); save(); } }
+    function save() { localStorage.setItem('osh_pro_v1', JSON.stringify(db)); renderRoutes(); }
+    function loginAdmin() { if(prompt("Pass:") === "admin777") document.getElementById('adminPanel').style.display = 'block'; }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    function downloadTicket() { html2canvas(document.getElementById('ticket-print')).then(c => { const a = document.createElement('a'); a.download = 'ticket.png'; a.href = c.toDataURL(); a.click(); }); }
+    window.onload = translatePage;
 </script>
 </body>
 </html>
