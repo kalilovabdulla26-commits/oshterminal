@@ -257,7 +257,7 @@
         const r = routes.find(x => x.id === id);
         if(!booked[id]) booked[id] = [];
         let seatsHTML = "";
-        for(let i=1; i<=16; i++) {
+        for(let i=1; i<=20; i++) {
             const isTaken = booked[id].includes(i);
             seatsHTML += `<div class="seat ${isTaken?'seat-red':'seat-green'}" onclick="${isTaken?'':'askInfo(\''+id+'\','+i+')'}">${i}</div>`;
             if(i % 2 === 0 && i % 4 !== 0) seatsHTML += `<div style="grid-column: 3;"></div>`;
@@ -303,41 +303,65 @@
     }
 function showFinalTicket(r, name, seat, email, tID, phone) {
     const purchaseTime = new Date().toLocaleString();
-    
-    // QR-код үчүн шилтеме түзүү (сканерлегенде сайт ачылып, билетти текшерет)
     const verifyURL = `${window.location.href}?verify=${tID}`; 
 
     document.getElementById('modalContent').innerHTML = `
-        <div id="ticket-to-print" style="background:white; border-radius:20px; overflow:hidden; border:1px solid #ddd; width:380px; margin:auto; font-family: 'Montserrat', sans-serif;">
-            <div style="background:#1a2a6c; color:white; padding:15px; text-align:center;">
-                <h3 style="margin:0;">OSH TERMINAL</h3>
-                <small>ЭЛЕКТРОНДУК БИЛЕТ</small>
+        <div id="ticket-to-print" style="background:white; border-radius:25px; overflow:hidden; border:2px solid #1a2a6c; width:380px; margin:auto; font-family: 'Montserrat', sans-serif;">
+            <div style="background:#1a2a6c; color:white; padding:20px; text-align:center;">
+                <h2 style="margin:0; letter-spacing:2px;">OSH TERMINAL</h2>
+                <div style="font-size:12px; opacity:0.8; margin-top:5px;">ELECTRONIC BOARDING PASS</div>
             </div>
+
             <div style="padding:20px;">
-                <div style="border-bottom: 1px dashed #ccc; padding-bottom:10px; margin-bottom:10px;">
-                    <p><b>Билет №:</b> ${tID}</p>
-                    <p><b>Жүргүнчү:</b> ${name}</p>
-                    <p><b>Багыт:</b> Ош ➔ ${r.to}</p>
-                    <p><b>Орун:</b> <span style="color:green; font-size:20px;">№${seat}</span></p>
-                </div>
-                
-                <div style="text-align:center;">
-                    <div id="qrcode" style="display:inline-block; border: 5px solid #fff;"></div>
-                    <p style="font-size:11px; color:#555; margin-top:5px;">Сканерлеп, билетти тастыктаңыз</p>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <div><small style="color:#888;">БАГЫТ</small><br><b style="font-size:18px;">ОШ ➔ ${r.to.toUpperCase()}</b></div>
+                    <div style="text-align:right;"><small style="color:#888;">БИЛЕТ №</small><br><b>${tID}</b></div>
                 </div>
 
-                <div style="background:#fff3cd; border:1px solid #ffeeba; padding:10px; border-radius:10px; margin-top:15px; font-size:11px; color:#856404;">
-                    <b>⚠️ ЭСКЕРТҮҮ:</b> Каттам жөнөөрүнө 30 мүнөт калганда автобекетте болушуңуз шарт. Билетти сактап коюңуз!
+                <div style="background:#f8f9fa; border:2px solid #eee; border-radius:15px; padding:15px; display:flex; justify-content:space-around; align-items:center; margin-bottom:20px;">
+                    <div style="text-align:center;">
+                        <small style="color:#e74c3c; font-weight:800;">КЕТҮҮ КҮНҮ</small><br>
+                        <b style="font-size:20px; color:#333;">${r.date}</b>
+                    </div>
+                    <div style="width:1px; height:40px; background:#ccc;"></div>
+                    <div style="text-align:center;">
+                        <small style="color:#e74c3c; font-weight:800;">КЕТҮҮ СААТЫ</small><br>
+                        <b style="font-size:24px; color:#1a2a6c;">${r.time}</b>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                    <div><small style="color:#888;">ЖҮРГҮНЧҮ</small><br><b>${name}</b></div>
+                    <div style="text-align:right;"><small style="color:#888;">ОРУН</small><br><b style="font-size:22px; color:#27ae60;">№${seat}</b></div>
+                </div>
+
+                <div style="text-align:center; padding:10px; border-top:1px dashed #ccc;">
+                    <div id="qrcode" style="display:inline-block; padding:10px; background:#fff;"></div>
+                    <p style="font-size:11px; color:#555; margin-top:5px;">Билетти текшерүү үчүн сканерлеңиз</p>
+                </div>
+
+                <div style="background:#fff3cd; padding:12px; border-radius:10px; font-size:11px; color:#856404; line-height:1.4;">
+                    <b>⚠️ ЭСКЕРТҮҮ:</b> Автобус саат <b>${r.time}</b>до так жөнөйт. Кетүү убактысынан 30 мүнөт мурун келишиңизди суранабыз.
                 </div>
                 
-                <p style="font-size:10px; color:#999; text-align:center; margin-top:10px;">Сатып алынды: ${purchaseTime}</p>
+                <p style="font-size:10px; color:#aaa; text-align:center; margin-top:15px;">Сатып алынган убакыт: ${purchaseTime}</p>
             </div>
         </div>
+
         <div style="padding:15px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button class="search-btn" style="background:#27ae60;" onclick="downloadTicket('${tID}')">📥 Жүктөө</button>
+            <button class="search-btn" style="background:#27ae60;" onclick="downloadTicket('${tID}')">📥 Жүктөө (PNG)</button>
             <button class="search-btn" style="background:#333;" onclick="closeModal()">Жабуу</button>
         </div>`;
     
+    setTimeout(() => { 
+        new QRCode(document.getElementById("qrcode"), { 
+            text: verifyURL, 
+            width: 130, 
+            height: 130,
+            colorDark : "#1a2a6c"
+        }); 
+    }, 150);
+}
     setTimeout(() => { 
         new QRCode(document.getElementById("qrcode"), { 
             text: verifyURL, 
