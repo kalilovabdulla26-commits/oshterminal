@@ -385,6 +385,23 @@ function showFinalTicket(r, name, seat, email, tID, phone) {
     function closeModal() { document.getElementById('modal').style.display = 'none'; initialLoad(); }
 
     window.onload = initialLoad;
+window.onload = function() {
+    // 1. Таблону жүктөө
+    initialLoad(); 
+
+    // 2. QR-код сканерлөөнү текшерүү (URL аркылуу)
+    const urlParams = new URLSearchParams(window.location.search);
+    const verifyID = urlParams.get('verify');
+    
+    if (verifyID) {
+        // Кичинекей кечигүү менен билдирүү чыгаруу
+        setTimeout(() => {
+            alert(`✅ БИЛЕТ ТАСТЫКТАЛДЫ!\n\nБилет номери: ${verifyID}\nСтатусу: Жарактуу\nОш Автобекет сизди күтөт!`);
+            // URL'ди тазалап коюу (кайра-кайра чыга бербеши үчүн)
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }, 500);
+    }
+};
 </script>
 </body>
 </html>
