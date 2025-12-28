@@ -301,33 +301,52 @@
 
         showFinalTicket(r, name, seat, email, tID, phone);
     }
+function showFinalTicket(r, name, seat, email, tID, phone) {
+    const purchaseTime = new Date().toLocaleString();
+    
+    // QR-код үчүн шилтеме түзүү (сканерлегенде сайт ачылып, билетти текшерет)
+    const verifyURL = `${window.location.href}?verify=${tID}`; 
 
-    function showFinalTicket(r, name, seat, email, tID, phone) {
-        const purchaseTime = new Date().toLocaleString();
-        const waText = `Билет №: ${tID}%0AЖүргүнчү: ${name}%0AБагыт: Ош - ${r.to}%0AОрун: №${seat}`;
-        const waLink = `https://wa.me/${phone.replace(/\D/g,'')}?text=${waText}`;
-
-        document.getElementById('modalContent').innerHTML = `
-            <div id="ticket-to-print" style="background:white; border-radius:20px; overflow:hidden; border:1px solid #ddd; width:380px; margin:auto;">
-                <div style="background:#1a2a6c; color:white; padding:15px; text-align:center;"><h3>ELECTRONIC TICKET</h3></div>
-                <div style="padding:20px;">
-                    <p><b>№:</b> ${tID}</p>
+    document.getElementById('modalContent').innerHTML = `
+        <div id="ticket-to-print" style="background:white; border-radius:20px; overflow:hidden; border:1px solid #ddd; width:380px; margin:auto; font-family: 'Montserrat', sans-serif;">
+            <div style="background:#1a2a6c; color:white; padding:15px; text-align:center;">
+                <h3 style="margin:0;">OSH TERMINAL</h3>
+                <small>ЭЛЕКТРОНДУК БИЛЕТ</small>
+            </div>
+            <div style="padding:20px;">
+                <div style="border-bottom: 1px dashed #ccc; padding-bottom:10px; margin-bottom:10px;">
+                    <p><b>Билет №:</b> ${tID}</p>
                     <p><b>Жүргүнчү:</b> ${name}</p>
                     <p><b>Багыт:</b> Ош ➔ ${r.to}</p>
-                    <p><b>Убакыт:</b> ${r.date} | ${r.time}</p>
                     <p><b>Орун:</b> <span style="color:green; font-size:20px;">№${seat}</span></p>
-                    <div style="text-align:center; margin:10px;"><div id="qrcode" style="display:inline-block;"></div></div>
-                    <p style="font-size:10px; color:#999; text-align:center;">Сатып алынды: ${purchaseTime}</p>
                 </div>
+                
+                <div style="text-align:center;">
+                    <div id="qrcode" style="display:inline-block; border: 5px solid #fff;"></div>
+                    <p style="font-size:11px; color:#555; margin-top:5px;">Сканерлеп, билетти тастыктаңыз</p>
+                </div>
+
+                <div style="background:#fff3cd; border:1px solid #ffeeba; padding:10px; border-radius:10px; margin-top:15px; font-size:11px; color:#856404;">
+                    <b>⚠️ ЭСКЕРТҮҮ:</b> Каттам жөнөөрүнө 30 мүнөт калганда автобекетте болушуңуз шарт. Билетти сактап коюңуз!
+                </div>
+                
+                <p style="font-size:10px; color:#999; text-align:center; margin-top:10px;">Сатып алынды: ${purchaseTime}</p>
             </div>
-            <div style="padding:15px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <button class="search-btn" style="background:#25D366;" onclick="window.open('${waLink}','_blank')">WhatsApp</button>
-                <button class="search-btn" style="background:#27ae60;" onclick="downloadTicket('${tID}')">📥 Жүктөө</button>
-                <button class="search-btn" style="background:#333; grid-column:span 2;" onclick="closeModal()">Жабуу</button>
-            </div>`;
-        
-        setTimeout(() => { new QRCode(document.getElementById("qrcode"), { text: tID, width: 90, height: 90 }); }, 100);
-    }
+        </div>
+        <div style="padding:15px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <button class="search-btn" style="background:#27ae60;" onclick="downloadTicket('${tID}')">📥 Жүктөө</button>
+            <button class="search-btn" style="background:#333;" onclick="closeModal()">Жабуу</button>
+        </div>`;
+    
+    setTimeout(() => { 
+        new QRCode(document.getElementById("qrcode"), { 
+            text: verifyURL, 
+            width: 120, 
+            height: 120,
+            colorDark : "#1a2a6c"
+        }); 
+    }, 150);
+}
 
     function downloadTicket(tID) {
         html2canvas(document.getElementById('ticket-to-print')).then(canvas => {
