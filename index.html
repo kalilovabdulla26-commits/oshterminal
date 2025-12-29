@@ -71,6 +71,26 @@
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
         #adminPanel { display: none; background: white; margin: 20px 8%; padding: 30px; border-radius: 30px; border: 1px solid #ddd; }
+       /* QR контейнери жана анын ичиндеги печаттын стили */
+#qr { position: relative; display: inline-block; }
+.qr-seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px; 
+    height: 18px;
+    background: #0044cc; /* Сиздин негизги көк түсүңүз */
+    color: #ffcc00;    /* Сары тамга */
+    border-radius: 50%;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 900;
+    z-index: 10;
+}
     </style>
 </head>
 <body>
@@ -302,11 +322,64 @@
     }
 
     function showTicket(id, name, seat) {
-        const r = db.find(x => x.id === id);
-        const w = words[lang];
-        const tID = Math.floor(100000 + Math.random() * 900000);
-        const now = new Date();
-        const pDate = now.toLocaleString();
+    const r = db.find(x => x.id === id);
+    const w = words[lang];
+    const tID = Math.floor(100000 + Math.random() * 900000);
+    const now = new Date();
+    const pDate = now.toLocaleString();
+
+    document.getElementById('modalInner').innerHTML = `
+        <div id="ticket-print" class="ticket-box">
+            <div class="t-top">
+                <div style="display:flex; justify-content:space-between; font-size:10px;"><b>OSH TERMINAL PRO</b> <span>BOARDING PASS</span></div>
+                <h2 style="margin:15px 0 5px;">ОШ ➔ ${r.to.toUpperCase()}</h2>
+                <div style="font-size:9px; opacity:0.8;">${w.t_issue}: ${pDate}</div>
+            </div>
+            <div class="t-mid">
+                <div><small style="color:#999;">${w.t_pass}</small><br><b>${name}</b></div>
+                <div style="text-align:right;"><small style="color:#999;">${w.t_num}</small><br><b style="color:var(--danger);">${tID}</b></div>
+                <div><small style="color:#999;">${w.t_date}</small><br><b>${r.date}</b></div>
+                <div style="text-align:right;"><small style="color:#999;">${w.t_time}</small><br><b style="font-size:18px; color:var(--primary);">${r.time}</b></div>
+                <div><small style="color:#999;">${w.t_car}</small><br><b>${r.car}</b></div>
+                <div style="text-align:right;"><small style="color:#999;">${w.t_plate}</small><br><b>${r.num}</b></div>
+            </div>
+            <div class="t-divider"></div>
+            <div class="t-bottom" style="flex-direction: column; align-items: stretch; display: flex;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 20px;">
+                    <div><small style="color:#999;">${w.t_seat}</small><br><b style="font-size:32px; color:var(--success); line-height:1;">${seat}</b></div>
+                    <div id="qr"></div> 
+                </div>
+                <div style="border-top: 1px solid #eee; padding: 15px 20px; text-align: left; background: #fafafa; border-radius: 0 0 20px 20px;">
+                    <b style="font-size: 9px; color: var(--danger);">${w.t_warn}:</b>
+                    <p style="font-size: 8px; color: #666; margin: 3px 0 0; line-height: 1.2;">${w.t_msg}</p>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+            <button class="btn-main" style="background:var(--success)" onclick="downloadTicket()">${w.t_save}</button>
+            <button class="btn-main" style="background:#fff; color:#333; border:1px solid #ddd" onclick="closeModal()">${w.t_exit}</button>
+        </div>
+    `;
+
+    // QR кодду түзүү жана ортосуна печат коюу
+    setTimeout(() => { 
+        const qrData = `БИЛЕТ: #${tID}\nЖҮРГҮНЧҮ: ${name}\nБАГЫТ: ОШ - ${r.to.toUpperCase()}\nОРУН: ${seat}`;
+        
+        new QRCode(document.getElementById("qr"), { 
+            text: qrData, 
+            width: 75, 
+            height: 75,
+            correctLevel : QRCode.CorrectLevel.H 
+        }); 
+
+        // Печатты кошуу
+        const qrContainer = document.getElementById("qr");
+        const seal = document.createElement("div");
+        seal.className = "qr-seal";
+        seal.innerText = "O"; 
+        qrContainer.appendChild(seal);
+    }, 100);
+}
 
         document.getElementById('modalInner').innerHTML = `
             <div id="ticket-print" class="ticket-box">
